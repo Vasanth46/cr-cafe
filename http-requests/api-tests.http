@@ -1,0 +1,117 @@
+### =================================================================
+### STEP 1: GET AUTHENTICATION TOKENS
+### =================================================================
+
+### Test Case 1: Login as 'worker' to get a JWT token
+# Run this first to get the token for all worker-related tasks.
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "worker",
+  "password": "workerpass"
+}
+
+### COPY the token from the response above and paste it into the variable below.
+@worker_token = eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9XT1JLRVIifV0sInN1YiI6IndvcmtlciIsImlhdCI6MTc1MjkxOTY3NywiZXhwIjoxNzUyOTU1Njc3fQ.9Hzjp68eVtcqnXGwKsqIoB-T6pv0wCKR3kjLhSn20Qw
+
+
+### =================================================================
+
+
+### Test Case 2: Login as 'owner' to get a JWT token
+# Run this to get the token for all owner/manager tasks.
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "owner",
+  "password": "ownerpass"
+}
+
+### COPY the token from the response above and paste it into the variable below.
+@owner_token = eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9PV05FUiJ9XSwic3ViIjoib3duZXIiLCJpYXQiOjE3NTI4Mjk0NTIsImV4cCI6MTc1Mjg2NTQ1Mn0.zya1kpzQOWVEVo0EcHH_-Wk0f7IPS61GqdjK87TUK84
+
+
+### =================================================================
+### STEP 2: ORDER AND BILLING TESTS (as Worker)
+### =================================================================
+
+### Test Case 3: Create a new order using the Worker's Token
+# This test uses the token you stored in the @worker_token variable.
+POST http://localhost:8080/api/orders
+Authorization: Bearer {{worker_token}}
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "items": [
+    {
+      "itemId": 1,
+      "quantity": 2
+    },
+    {
+      "itemId": 4,
+      "quantity": 4
+    }
+  ]
+}
+
+### NOTE: After running Test Case 3, get the new order ID from the response.
+### Update the @order_id variable below with the new ID.
+@order_id = 18
+
+
+### =================================================================
+
+
+### Test Case 4: Generate a bill for the new order (No Discount)
+POST http://localhost:8080/api/orders/{{order_id}}/bill
+Authorization: Bearer {{worker_token}}
+
+
+### =================================================================
+
+
+### Test Case 5: Generate a bill for a different order WITH a Discount
+# INSTRUCTIONS:
+# 1. First, create another order by running Test Case 3 again.
+# 2. Get the new order ID from the response.
+# 3. Update the @order_id variable above with this new ID.
+# 4. Then run this request.
+POST http://localhost:8080/api/orders/{{order_id}}/bill?discountId=1
+Authorization: Bearer {{worker_token}}
+
+
+### =================================================================
+### STEP 3: PERMISSION AND SECURITY TESTS
+### =================================================================
+
+### Test Case 6: Owner creates a new user (This should SUCCEED)
+# This test uses the @owner_token to perform an owner-only action.
+POST http://localhost:8080/api/users
+Authorization: Bearer {{owner_token}}
+Content-Type: application/json
+
+{
+  "username": "new_worker_sam6",
+  "password": "password456",
+  "role": "WORKER"
+}
+
+
+### =================================================================
+
+
+### Test Case 7: Worker tries to create a new user (This should FAIL)
+# This test uses the @worker_token to attempt an owner-only action.
+# It should correctly fail with a "403 Forbidden" error.
+POST http://localhost:8080/api/users
+Authorization: Bearer {{worker_token}}
+Content-Type: application/json
+
+{
+  "username": "another_worker",
+  "password": "password789",
+  "role": "WORKER"
+}

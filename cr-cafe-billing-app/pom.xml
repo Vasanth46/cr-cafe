@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Link to the parent POM -->
+    <parent>
+        <groupId>com.crcafe</groupId>
+        <artifactId>cr-cafe-billing</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>cr-cafe-billing-app</artifactId>
+    <name>cr-cafe-billing-app</name>
+    <description>Main application runner and packaging module</description>
+
+    <dependencies>
+        <!-- This module depends on the API module, which in turn depends on Core -->
+        <dependency>
+            <groupId>com.crcafe</groupId>
+            <artifactId>cr-cafe-billing-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Boot starter for testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- This plugin packages the application into a single executable JAR file -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
