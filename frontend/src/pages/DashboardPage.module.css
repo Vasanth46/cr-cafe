@@ -1,0 +1,78 @@
+.dashboardPage_root {
+  min-height: 100vh;
+  background: #E3EED4;
+  padding: 2rem;
+}
+.dashboardPage_cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+@media (min-width: 768px) {
+  .dashboardPage_cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.dashboardPage_card {
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.dashboardPage_cardTitle {
+  color: #6B9071;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.dashboardPage_cardValue {
+  color: #0F2A1D;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.dashboardPage_cardChange {
+  color: #388e3c;
+  font-size: 0.9rem;
+}
+.dashboardPage_grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+@media (min-width: 768px) {
+  .dashboardPage_grid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+.dashboardPage_section {
+  background: #fff;
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+}
+.dashboardPage_sectionTitle {
+  font-weight: bold;
+  color: #0F2A1D;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+.dashboardPage_table {
+  width: 100%;
+  color: #0F2A1D;
+  border-collapse: collapse;
+}
+.dashboardPage_table th, .dashboardPage_table td {
+  padding: 0.5rem 0.5rem;
+  text-align: left;
+}
+.dashboardPage_table th {
+  font-weight: 600;
+}
+.dashboardPage_table tr {
+  border-top: 1px solid #AEC3B0;
+} 

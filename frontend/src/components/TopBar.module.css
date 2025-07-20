@@ -1,0 +1,104 @@
+.topBar_root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5f8ec;
+  padding: 1.2rem 2rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.topBar_left {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.topBar_logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+  border: 2px solid #6B9071;
+}
+.topBar_date {
+  font-size: 1.1rem;
+  color: #375534;
+  font-weight: 500;
+}
+.topBar_center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.topBar_search {
+  width: 340px;
+  padding: 0.7rem 1.2rem;
+  border-radius: 2rem;
+  border: 1.5px solid #AEC3B0;
+  font-size: 1.1rem;
+  background: #fff;
+  outline: none;
+  transition: border 0.2s;
+}
+.topBar_search:focus {
+  border-color: #375534;
+}
+.topBar_right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.topBar_orders {
+  color: #375534;
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+.topBar_report {
+  background: #375534;
+  color: #fff;
+  border: none;
+  border-radius: 1rem;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.topBar_report:hover {
+  background: #0F2A1D;
+}
+.topBar_notification {
+  font-size: 1.5rem;
+  color: #6B9071;
+  cursor: pointer;
+}
+.topBar_profile {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: #fff;
+  border-radius: 2rem;
+  padding: 0.3rem 1rem 0.3rem 0.3rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.topBar_avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #6B9071;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.topBar_profileName {
+  font-weight: 600;
+  color: #0F2A1D;
+  font-size: 1rem;
+}
+.topBar_profileRole {
+  color: #6B9071;
+  font-size: 0.95rem;
+} 

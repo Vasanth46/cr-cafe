@@ -1,0 +1,5 @@
+/* index.css: resets, layout, typography */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; background: #E3EED4; color: #0F2A1D; }
+#root { min-height: 100vh; display: flex; flex-direction: column; font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; }

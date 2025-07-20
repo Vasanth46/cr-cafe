@@ -1,0 +1,42 @@
+.tabs_root {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.2rem;
+  margin-top: 0.2rem;
+}
+.tab {
+  background: #f5f8ec;
+  color: #0F2A1D;
+  border: 2.5px solid #AEC3B0;
+  border-radius: 2rem;
+  padding: 1.1rem 2.8rem;
+  font-weight: 700;
+  font-size: 1.18rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.tab--active {
+  background: #375534;
+  color: #fff;
+  border-color: #375534;
+  box-shadow: 0 4px 16px rgba(55,85,52,0.10);
+}
+.tab--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.tab_count {
+  font-size: 1.02rem;
+  margin-left: 0.7rem;
+  color: #6B9071;
+}
+.tab_restock {
+  color: #e53935;
+  font-size: 1.02rem;
+  margin-left: 0.9rem;
+} 

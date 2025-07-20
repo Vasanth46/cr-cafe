@@ -1,0 +1,142 @@
+.menuPage_root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #E3EED4;
+}
+.menuPage_main {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 2.5rem 2.5rem;
+  gap: 2.5rem;
+  box-sizing: border-box;
+}
+.menuPage_leftPanel {
+  flex: 1;
+  padding: 0;
+  min-width: 0;
+}
+.menuPage_searchContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 2.2rem;
+}
+.menuPage_searchBar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 2px solid #375534;
+  border-radius: 2rem;
+  padding: 0.7rem 1.5rem;
+  font-size: 1.15rem;
+  box-shadow: none;
+  position: relative;
+}
+.menuPage_searchIcon {
+  color: #375534;
+  font-size: 1.2rem;
+  margin-right: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+.menuPage_searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1.15rem;
+  color: #0F2A1D;
+  font-family: inherit;
+}
+.menuPage_searchShortcut {
+  color: #375534;
+  font-size: 1.2rem;
+  margin-left: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+.menuPage_searchInput:focus {
+  border-color: #375534;
+}
+.menuPage_categoryTabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.menuPage_categoryTab {
+  padding: 0.5rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  border: 2px solid #AEC3B0;
+  background: #AEC3B0;
+  color: #0F2A1D;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.menuPage_categoryTab--active {
+  background: #375534;
+  color: #fff;
+  border-color: #375534;
+}
+.menuPage_categoryTab--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.menuPage_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+@media (min-width: 900px) {
+  .menuPage_grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+.menuPage_rightPanel {
+  width: 100%;
+  max-width: 340px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 1.2rem 1rem 1.5rem 1rem;
+  border-radius: 1.2rem;
+  min-width: 260px;
+  align-self: flex-start;
+}
+.menuPage_success {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #AEC3B0;
+  border-radius: 1rem;
+  color: #0F2A1D;
+}
+.menuPage_successTitle {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+.menuPage_successReceipt {
+  font-family: monospace;
+}
+.menuPage_successTotal {
+  font-weight: 600;
+}
+.menuPage_successBtn {
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  background: #375534;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.menuPage_successBtn:hover {
+  background: #0F2A1D;
+} 
