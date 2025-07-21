@@ -4,6 +4,7 @@ export interface User {
   id: string;
   username: string;
   role: 'WORKER' | 'MANAGER' | 'OWNER';
+  email?: string;
 }
 
 export interface MenuItem {

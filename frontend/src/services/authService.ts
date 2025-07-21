@@ -24,4 +24,8 @@ const getProfile = async (token: string): Promise<User> => {
   return res.data;
 };
 
-export default { login, getProfile }; 
+const logout = async (): Promise<void> => {
+  await api.post('/auth/logout');
+};
+
+export default { login, getProfile, logout }; 

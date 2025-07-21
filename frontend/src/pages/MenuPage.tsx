@@ -11,6 +11,7 @@ import MenuCategoryTabs from '../components/MenuCategoryTabs';
 import { useAuth } from '../context/AuthContext';
 import styles from './MenuPage.module.css';
 import BillResultModal from '../components/BillResultModal';
+import Layout from '../components/Layout';
 
 const categories = [
   { key: 'All', label: 'All' },
@@ -37,10 +38,12 @@ const MenuPage: React.FC = () => {
 
   useEffect(() => {
     itemService.getItems().then(setItems).finally(() => setLoading(false));
-    dashboardService.getSummary().then(summary => {
-      setOrderCount(summary?.orders || 0);
-    });
-  }, []);
+    if (user?.role === 'OWNER') {
+      dashboardService.getSummary().then(summary => {
+        setOrderCount(summary?.orders || 0);
+      });
+    }
+  }, [user]);
 
   const handleAddItem = (item: MenuItem) => {
     setSelectedItems(prev => {
@@ -98,14 +101,11 @@ const MenuPage: React.FC = () => {
   );
 
   return (
-    <div className={styles.menuPage_root}>
-      <TopBar
-        orderCount={orderCount}
-        user={{
-          name: user?.username || '',
-          role: user?.role || '',
-        }}
-      />
+    <Layout orderCount={orderCount} user={{
+      name: user?.username || '',
+      role: user?.role || '',
+      email: user?.email || undefined,
+    }}>
       {billResult ? (
         <BillResultModal
           open={!!billResult}
@@ -184,7 +184,7 @@ const MenuPage: React.FC = () => {
         onClose={() => setShowPreview(false)}
         onConfirm={handleConfirmBill}
       />
-    </div>
+    </Layout>
   );
 };
 

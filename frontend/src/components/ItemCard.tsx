@@ -1,6 +1,8 @@
 import React from 'react';
 import type { MenuItem } from '../types';
 import styles from './ItemCard.module.css';
+import character from '../assets/character.png';
+import banner from '../assets/banner.png';
 
 interface ItemCardProps {
   item: MenuItem;
@@ -9,13 +11,30 @@ interface ItemCardProps {
 
 const placeholder = 'https://via.placeholder.com/80x80?text=No+Image';
 
+const images = import.meta.glob('../assets/*.png', { eager: true, import: 'default' }) as Record<string, string>;
+
+const getAssetImage = (name: string): string => {
+  const normalized = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+  // Try to find a .png file whose name (without extension) matches the normalized item name
+  for (const path in images) {
+    const file = path.split('/').pop()?.toLowerCase() || '';
+    if (file.endsWith('.png')) {
+      const base = file.replace('.png', '').replace(/[^a-z0-9]/g, '');
+      if (base === normalized) {
+        return images[path];
+      }
+    }
+  }
+  return placeholder;
+};
+
 const ItemCard: React.FC<ItemCardProps> = ({ item, onAdd }) => {
   return (
     <div className={item.available ? styles.itemCard_root : `${styles.itemCard_root} ${styles['itemCard_root--unavailable']}`}
       >
       <div className={styles.itemCard_imageWrap}>
         <img
-          src={item.imageUrl || placeholder}
+          src={getAssetImage(item.name)}
           alt={item.name}
           className={styles.itemCard_image}
         />

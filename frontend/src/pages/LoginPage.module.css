@@ -1,31 +1,160 @@
-.loginPage_root {
+.loginPage_outer {
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #E3EED4;
+  background: linear-gradient(135deg, #e3eed4 0%, #b6d7a8 40%, #c2e59c 70%, #f7faf3 100%);
+  position: relative;
+  overflow: hidden;
 }
 
-.loginPage_card {
-  background: #fff;
-  border-radius: 1.25rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-  padding: 2rem;
+/* Decorative blurred blobs for background */
+.loginPage_bgBlob1 {
+  position: absolute;
+  top: -120px;
+  left: -120px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle at 60% 40%, #b6d7a8 0%, #e3eed4 100%);
+  opacity: 0.45;
+  filter: blur(40px);
+  z-index: 0;
+}
+.loginPage_bgBlob2 {
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle at 40% 60%, #c2e59c 0%, #e3eed4 100%);
+  opacity: 0.38;
+  filter: blur(48px);
+  z-index: 0;
+}
+.loginPage_bgBlob3 {
+  position: absolute;
+  top: 40%;
+  left: 60vw;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, #f7faf3 0%, #b6d7a8 100%);
+  opacity: 0.22;
+  filter: blur(32px);
+  z-index: 0;
+}
+/* Extra blobs for more vibrancy */
+.loginPage_bgBlob4 {
+  position: absolute;
+  top: 10vh;
+  right: 10vw;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, #f9e79f 0%, #e3eed4 100%);
+  opacity: 0.22;
+  filter: blur(36px);
+  z-index: 0;
+}
+.loginPage_bgBlob5 {
+  position: absolute;
+  bottom: 8vh;
+  left: 8vw;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, #b6d7a8 0%, #f7faf3 100%);
+  opacity: 0.18;
+  filter: blur(28px);
+  z-index: 0;
+}
+
+/* Glassmorphism effect behind the card */
+.loginPage_glassBg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  max-width: 90vw;
+  height: 480px;
+  background: rgba(255,255,255,0.13);
+  border-radius: 2.5rem;
+  box-shadow: 0 8px 48px 0 rgba(55,85,52,0.10);
+  filter: blur(22px) saturate(1.2);
+  z-index: 1;
+  pointer-events: none;
+  border: 1.5px solid rgba(255,255,255,0.32);
+}
+
+.loginPage_cardRow {
+  display: flex;
+  flex-direction: row;
+  background: rgba(255,255,255,0.65);
+  border-radius: 2.5rem;
+  box-shadow: 0 12px 48px rgba(55,85,52,0.18), 0 2px 16px rgba(55,85,52,0.09);
+  overflow: hidden;
+  min-width: 520px;
+  max-width: 1100px;
+  width: 80vw;
+  min-height: 540px;
+  z-index: 2;
+  backdrop-filter: blur(18px) saturate(1.25);
+  border: 2.5px solid rgba(174,195,176,0.22);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+
+.loginPage_cardImageSection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7faf3;
+  min-width: 380px;
+  max-width: 520px;
+  width: 40vw;
+  padding: 2.5rem 2rem 2.5rem 2.5rem;
+}
+
+.loginPage_cardImg {
   width: 100%;
-  max-width: 400px;
+  max-width: 340px;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 8px 32px rgba(55,85,52,0.13));
+}
+
+.loginPage_cardFormSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 2.5rem 2.5rem 2rem;
+  min-width: 320px;
+}
+
+.loginPage_bannerLogo {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+  color: #23402a;
+  text-align: center;
 }
 
 .loginPage_title {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 1rem;
+  font-weight: 400;
   color: #0F2A1D;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.1rem;
+  margin-top: 0.7rem;
+  text-align: center;
 }
 
 .loginPage_subtitle {
   color: #6B9071;
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  font-size: 1.15rem;
+  margin-bottom: 1.7rem;
+  text-align: center;
 }
 
 .loginPage_label {
@@ -33,17 +162,19 @@
   color: #0F2A1D;
   font-weight: 500;
   margin-bottom: 0.25rem;
+  margin-top: 1rem;
 }
 
 .loginPage_input {
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid #AEC3B0;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
+  padding: 0.6rem 1.1rem;
+  border: 1.5px solid #AEC3B0;
+  border-radius: 0.6rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
   outline: none;
   transition: border 0.2s;
+  background: #f8faf7;
 }
 .loginPage_input:focus {
   border-color: #375534;
@@ -51,20 +182,23 @@
 
 .loginPage_error {
   color: #e53935;
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
+  font-size: 0.98rem;
+  margin-bottom: 0.7rem;
+  margin-top: 0.5rem;
+  text-align: center;
 }
 
 .loginPage_button {
   width: 100%;
-  padding: 0.6rem 0;
-  border-radius: 0.5rem;
+  padding: 0.7rem 0;
+  border-radius: 0.6rem;
   background: #375534;
   color: #fff;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1.13rem;
   border: none;
   cursor: pointer;
+  margin-top: 1.2rem;
   transition: background 0.2s;
 }
 .loginPage_button:hover:not(:disabled) {
@@ -73,4 +207,27 @@
 .loginPage_button:disabled {
   background: #AEC3B0;
   cursor: not-allowed;
+}
+
+@media (max-width: 1100px) {
+  .loginPage_cardRow {
+    min-width: 0;
+    max-width: 98vw;
+    min-height: 0;
+    width: 98vw;
+  }
+  .loginPage_cardImageSection {
+    min-width: 0;
+    max-width: 100vw;
+    width: 100%;
+    padding: 2rem 1rem 1.2rem 1rem;
+    justify-content: center;
+  }
+  .loginPage_cardImg {
+    max-width: 200px;
+  }
+  .loginPage_cardFormSection {
+    padding: 1.2rem 1rem 2rem 1rem;
+    min-width: 0;
+  }
 } 

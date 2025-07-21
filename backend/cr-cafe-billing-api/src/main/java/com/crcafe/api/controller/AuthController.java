@@ -53,4 +53,11 @@ public class AuthController {
         // Pass the user's ID into the response
         return ResponseEntity.ok(new LoginResponse(jwt, user.getId(), userDetails.getUsername(), role));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        // In a stateless JWT system, logout is handled on the client by deleting the token.
+        // This endpoint exists for extensibility (e.g., token blacklist) and frontend symmetry.
+        return ResponseEntity.ok().build();
+    }
 }

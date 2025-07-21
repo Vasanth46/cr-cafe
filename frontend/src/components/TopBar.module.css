@@ -101,4 +101,119 @@
 .topBar_profileRole {
   color: #6B9071;
   font-size: 0.95rem;
+}
+.topBar_logoutBtn {
+  background: none;
+  border: none;
+  color: #e53935;
+  font-size: 0.95rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+}
+.topBar_logoutBtn:hover {
+  background: #e5393522;
+  color: #b71c1c;
+}
+.topBar_logoutModal {
+  position: absolute;
+  top: 70px;
+  right: 40px;
+  background: #fff;
+  border: 1.5px solid #AEC3B0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  z-index: 1000;
+  min-width: 220px;
+  padding: 0.8rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.topBar_logoutModalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.topBar_logoutModalText {
+  font-size: 1rem;
+  color: #0F2A1D;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.topBar_logoutModalActions {
+  display: flex;
+  gap: 0.7rem;
+  justify-content: center;
+}
+.topBar_cancelBtn {
+  background: none;
+  border: 1.5px solid #AEC3B0;
+  color: #375534;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.2rem 0.8rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.topBar_cancelBtn:hover {
+  background: #AEC3B022;
+  border-color: #375534;
+  color: #0F2A1D;
+}
+.topBar_profileMenu {
+  position: absolute;
+  top: 56px;
+  right: 0;
+  width: 210px;
+  background: #fff;
+  border: 1.5px solid #AEC3B0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  z-index: 1000;
+  padding: 1.1rem 1.2rem 0.7rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+.topBar_profileMenuName {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #0F2A1D;
+  margin-bottom: 0.7rem;
+  text-align: left;
+}
+.topBar_profileMenuDivider {
+  height: 1px;
+  background: #ECECEC;
+  margin: 0.7rem 0 0.7rem 0;
+  width: 100%;
+}
+.topBar_profileMenuLogout {
+  background: #fdeaea;
+  border: none;
+  color: #e53935;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+  margin-top: 0.2rem;
+}
+.topBar_profileMenuLogout:hover {
+  background: #e5393522;
+  color: #b71c1c;
+}
+.topBar_profileMenuLogoutIcon {
+  margin-left: 0.7rem;
+  font-size: 1.1em;
 } 
