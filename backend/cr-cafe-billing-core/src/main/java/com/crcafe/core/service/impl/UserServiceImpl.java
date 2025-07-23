@@ -6,6 +6,8 @@ import com.crcafe.core.repository.UserRepository;
 import com.crcafe.core.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +24,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(String username, String password, UserRole role) {
+    @Transactional // Add this annotation
+    public User createUser(String username, String password, UserRole role, String profileImageUrl) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalStateException("Username already exists");
         }
@@ -31,6 +34,7 @@ public class UserServiceImpl implements UserService {
         // We must encode the password before saving it to the database for security
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(role);
+        user.setProfileImageUrl(profileImageUrl);
         return userRepository.save(user);
     }
 
@@ -47,5 +51,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public void saveUserRefreshToken(String username, String refreshToken) {
+        userRepository.findByUsername(username).ifPresent(user -> {
+            user.setRefreshToken(refreshToken);
+            userRepository.save(user);
+        });
     }
 }

@@ -3,8 +3,8 @@
 export interface User {
   id: string;
   username: string;
-  role: 'WORKER' | 'MANAGER' | 'OWNER';
-  email?: string;
+  role: 'OWNER' | 'MANAGER' | 'WORKER';
+  profileImageUrl?: string | null; // <-- ADD THIS LINE
 }
 
 export interface MenuItem {

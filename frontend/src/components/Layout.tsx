@@ -1,17 +1,31 @@
 import React from 'react';
-import TopBar, { TopBarProps } from './TopBar';
+import TopBar, { TopBarProps } from './TopBar'; // Adjust path if needed
+import styles from './Layout.module.css';
+import { useAuth } from '../context/AuthContext'; // Adjust path if needed
 
-interface LayoutProps extends TopBarProps {
-  children: React.ReactNode;
+interface LayoutProps {
+    children: React.ReactNode;
+    orderCount?: number; // Make orderCount optional
 }
 
-const Layout: React.FC<LayoutProps> = ({ orderCount, user, children }) => {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: '#E3EED4' }}>
-      <TopBar orderCount={orderCount} user={user} />
-      <main style={{ flex: 1, width: '100%' }}>{children}</main>
-    </div>
-  );
+const Layout: React.FC<LayoutProps> = ({ children, orderCount = 0 }) => {
+    const { user } = useAuth();
+
+    // Prepare user data for the TopBar
+    const topBarUser = {
+        name: user?.username || 'User',
+        role: user?.role || 'WORKER',
+        profileImageUrl: user?.profileImageUrl, // Pass the image URL
+    };
+
+    return (
+        <div className={styles.layoutRoot}>
+            <TopBar orderCount={orderCount} user={topBarUser} />
+            <main className={styles.contentArea}>
+                {children}
+            </main>
+        </div>
+    );
 };
 
-export default Layout; 
+export default Layout;

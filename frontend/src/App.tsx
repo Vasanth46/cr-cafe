@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import MenuPage from "./pages/MenuPage";
 import DashboardPage from "./pages/DashboardPage";
+import UsersPage from './pages/UsersPage';
 import './index.css';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
             <Route element={<ProtectedRoute allowedRoles={["OWNER"]} /> }>
               <Route path="/dashboard" element={<DashboardPage />} />
             </Route>
+            <Route path="/users" element={<UsersPage />} />
             <Route path="*" element={<LoginPage />} />
           </Routes>
         </div>

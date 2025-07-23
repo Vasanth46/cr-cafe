@@ -1,0 +1,11 @@
+.layoutRoot {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: #e3eed4; /* Use the consistent background color from your dashboard */
+}
+
+.contentArea {
+    flex-grow: 1; /* Ensures this area takes up the remaining space */
+    width: 100%;
+}

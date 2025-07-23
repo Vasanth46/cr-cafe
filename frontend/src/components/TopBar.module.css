@@ -237,3 +237,30 @@
   font-size: 0.9rem;
   color: #375534;
 }
+.topBar_profileMenuUsers {
+  background: #f0f5f0;
+  border: none;
+  color: #375534;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.7rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+}
+
+.topBar_profileMenuUsers:hover {
+  background: #dce8dc;
+  color: #0f2a1d;
+}
+.topBar_profileMenuUsers:not(:last-child) {
+  margin-bottom: 0.5rem; /* You can adjust this value */
+}
+.topBar_avatarImage {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}

@@ -10,4 +10,5 @@ public class LoginResponse {
     private Long id; // <-- ADD THIS FIELD
     private String username;
     private String role;
+    private String profileImageUrl;
 }

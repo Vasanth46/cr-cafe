@@ -1,10 +1,12 @@
 package com.crcafe.api.controller;
 
+import com.crcafe.api.dto.CreateUserRequest;
 import com.crcafe.api.dto.UserDto;
 import com.crcafe.api.dto.response.UserResponseDto;
 import com.crcafe.core.model.User;
 import com.crcafe.core.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,30 +25,36 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER')")
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserDto userDto) {
-        User newUser = userService.createUser(userDto.getUsername(), userDto.getPassword(), userDto.getRole());
-        // Convert the User entity to a safe DTO before returning
-        return ResponseEntity.ok(toUserResponseDto(newUser));
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody CreateUserRequest request) {
+        User newUser = userService.createUser(
+                request.getUsername(),
+                request.getPassword(),
+                request.getRole(),
+                request.getProfileImageUrl()
+        );
+        UserResponseDto responseDto = new UserResponseDto(
+                newUser.getId(),
+                newUser.getUsername(),
+                newUser.getRole(),
+                newUser.getProfileImageUrl()
+        );
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
+
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER')")
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        List<User> users = userService.findAllUsers();
-        // Convert the list of User entities to a list of safe DTOs
-        List<UserResponseDto> userDtos = users.stream()
-                .map(this::toUserResponseDto)
+    @PreAuthorize("hasRole('OWNER')")
+    public List<UserResponseDto> getAllUsers() {
+        return userService.findAllUsers().stream()
+                .map(user -> new UserResponseDto(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getRole(), // Pass the UserRole enum directly
+                        user.getProfileImageUrl()
+                ))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(userDtos);
     }
 
-    // Helper method to convert User entity to UserResponseDto
-    private UserResponseDto toUserResponseDto(User user) {
-        UserResponseDto dto = new UserResponseDto();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        dto.setRole(user.getRole());
-        return dto;
-    }
+
 }

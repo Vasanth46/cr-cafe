@@ -19,7 +19,7 @@ public class JwtUtil {
     // A secure, randomly generated key for signing the token.
     // In a real production app, this should be loaded from a secure configuration source.
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hours
+
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -42,19 +42,26 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
+    public String generateRefreshToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        long expirationTimeInMillis = 1000 * 60 * 60 * 24 * 7; // 7 days
+        return createToken(claims, userDetails.getUsername(), expirationTimeInMillis);
+    }
+
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         // Add user roles to the token claims
+        long expirationTimeInMillis = 1000 * 60 * 15;
         claims.put("roles", userDetails.getAuthorities());
-        return createToken(claims, userDetails.getUsername());
+        return createToken(claims, userDetails.getUsername(),expirationTimeInMillis);
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String subject, long expirationTimeInMillis) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTimeInMillis))
                 .signWith(SECRET_KEY)
                 .compact();
     }

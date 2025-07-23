@@ -7,7 +7,7 @@ import { FiLogOut } from 'react-icons/fi';
 
 export interface TopBarProps {
   orderCount: number;
-  user: { name: string; role: string; email?: string };
+  user: { name: string; role: string; profileImageUrl?: string | null };
 }
 
 const TopBar: React.FC<TopBarProps> = ({ orderCount, user }) => {
@@ -53,10 +53,39 @@ const TopBar: React.FC<TopBarProps> = ({ orderCount, user }) => {
           <button className={styles.topBar_report}>Report</button>
           <span className={styles.topBar_notification}>🔔</span>
           <div className={styles.topBar_profile} onClick={() => setShowProfileMenu(v => !v)} style={{ cursor: 'pointer', position: 'relative' }}>
-            <div className={styles.topBar_avatar}>{user.name[0]}</div>
+            {user.profileImageUrl ? (
+                <img src={user.profileImageUrl} alt={user.name} className={styles.topBar_avatarImage} />
+            ) : (
+                <div className={styles.topBar_avatar}>{user.name[0]}</div>
+            )}
+
             {showProfileMenu && (
                 <div className={styles.topBar_profileMenu} ref={profileMenuRef}>
                   <div className={styles.topBar_profileMenuName}>{user.name}</div>
+                  {user.role === 'OWNER' && (
+                      <>
+                        <button
+                            className={styles.topBar_profileMenuUsers}
+                            onClick={() => {
+                              setShowProfileMenu(false);
+                              navigate('/users');
+                            }}
+                        >
+                          Users
+                        </button>
+
+                        <button
+                            className={styles.topBar_profileMenuUsers}
+                            onClick={() => {
+                              setShowProfileMenu(false);
+                              navigate('/cafe-menu');
+                            }}
+                        >
+                          Cafe Menu
+                        </button>
+                      </>
+                  )}
+
                   <div className={styles.topBar_profileMenuDivider} />
                   <button className={styles.topBar_profileMenuLogout} onClick={handleLogout}>
                     Log Out <span style={{ marginLeft: '0.7rem', display: 'flex', alignItems: 'center' }}><FiLogOut /></span>

@@ -37,7 +37,7 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 // Permit the /login endpoint to be accessed without authentication
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/login","/api/auth/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 // We are not using HttpBasic anymore
