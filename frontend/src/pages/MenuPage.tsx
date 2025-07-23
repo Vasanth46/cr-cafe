@@ -106,75 +106,72 @@ const MenuPage: React.FC = () => {
       role: user?.role || '',
       email: user?.email || undefined,
     }}>
-      {billResult ? (
-        <BillResultModal
-          open={!!billResult}
-          bill={billResult}
-          user={user || { username: '' }}
-          onPrint={() => {}}
-          onClose={() => setBillResult(null)}
-        />
-      ) : (
-        <div className={styles.menuPage_main}>
-          <div className={styles.menuPage_leftPanel}>
-            <div className={styles.menuPage_searchContainer}>
-              <div className={styles.menuPage_searchBar}>
-                <span className={styles.menuPage_searchIcon}>
-                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="9" cy="9" r="7" stroke="#375534" strokeWidth="2" />
-                    <path d="M15 15L18 18" stroke="#375534" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
-                </span>
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className={styles.menuPage_searchInput}
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                />
-                <span className={styles.menuPage_searchShortcut}>
-                  &#8984;
-                </span>
-              </div>
+      <div className={styles.menuPage_main}>
+        <div className={styles.menuPage_leftPanel}>
+          <div className={styles.menuPage_searchContainer}>
+            <div className={styles.menuPage_searchBar}>
+              <span className={styles.menuPage_searchIcon}>
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="9" cy="9" r="7" stroke="#375534" strokeWidth="2" />
+                  <path d="M15 15L18 18" stroke="#375534" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder="Search"
+                className={styles.menuPage_searchInput}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+              <span className={styles.menuPage_searchShortcut}>
+                &#8984;
+              </span>
             </div>
-            <MenuCategoryTabs
-              categories={categories}
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-              items={items}
-            />
-            {loading ? (
-              <div style={{ color: '#375534' }}>Loading menu...</div>
-            ) : (
-              <div className={styles.menuPage_grid}>
-                {filteredItems.map(item => (
-                  <ItemCard key={item.id} item={item} onAdd={() => handleAddItem(item)} />
-                ))}
-              </div>
-            )}
           </div>
-          <div className={styles.menuPage_rightPanel}>
-            <OrderSummaryPanel
-              orderItems={selectedItems}
-              onRemove={handleRemoveItem}
-              onUpdateQuantity={handleUpdateQuantity}
-              onGenerateBill={handleGenerateBill}
-              generating={generating}
-              customerName={customerName}
-              onCustomerNameChange={setCustomerName}
-            />
-            {error && <div style={{ color: '#e53935', marginTop: 8 }}>{error}</div>}
-            {orderSuccess && (
-              <div className={styles.menuPage_success}>
-                <div className={styles.menuPage_successTitle}>Bill Generated!</div>
-                <div>Receipt ID: <span className={styles.menuPage_successReceipt}>{orderSuccess.id}</span></div>
-                <div>Total: <span className={styles.menuPage_successTotal}>${orderSuccess.total.toFixed(2)}</span></div>
-                <button className={styles.menuPage_successBtn} onClick={() => setOrderSuccess(null)}>New Order</button>
-              </div>
-            )}
-          </div>
+          <MenuCategoryTabs
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+            items={items}
+          />
+          {loading ? (
+            <div style={{ color: '#375534' }}>Loading menu...</div>
+          ) : (
+            <div className={styles.menuPage_grid}>
+              {filteredItems.map(item => (
+                <ItemCard key={item.id} item={item} onAdd={() => handleAddItem(item)} />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+        <div className={styles.menuPage_rightPanel}>
+          <OrderSummaryPanel
+            orderItems={selectedItems}
+            onRemove={handleRemoveItem}
+            onUpdateQuantity={handleUpdateQuantity}
+            onGenerateBill={handleGenerateBill}
+            generating={generating}
+            customerName={customerName}
+            onCustomerNameChange={setCustomerName}
+          />
+          {error && <div style={{ color: '#e53935', marginTop: 8 }}>{error}</div>}
+          {orderSuccess && (
+            <div className={styles.menuPage_success}>
+              <div className={styles.menuPage_successTitle}>Bill Generated!</div>
+              <div>Receipt ID: <span className={styles.menuPage_successReceipt}>{orderSuccess.id}</span></div>
+              <div>Total: <span className={styles.menuPage_successTotal}>${orderSuccess.total.toFixed(2)}</span></div>
+              <button className={styles.menuPage_successBtn} onClick={() => setOrderSuccess(null)}>New Order</button>
+            </div>
+          )}
+        </div>
+      </div>
+      <BillResultModal
+        open={!!billResult}
+        bill={billResult}
+        user={user || { username: '' }}
+        onPrint={() => {}}
+        onClose={() => setBillResult(null)}
+      />
       <BillPreviewModal
         open={showPreview}
         orderItems={selectedItems}
