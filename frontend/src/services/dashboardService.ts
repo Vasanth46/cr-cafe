@@ -1,4 +1,5 @@
 import api from './api';
+import { RecentTransaction } from "../types";
 
 export const getSummary = async () => {
   const res = await api.get('/dashboard/summary');
@@ -15,9 +16,19 @@ export const getRevenue = async (range: string) => {
   return res.data;
 };
 
-export const getRecentTransactions = async () => {
+// export const getRecentTransactions = async () => {
+//   const res = await api.get('/dashboard/recent-transactions');
+//   return res.data;
+// };
+
+export const getRecentTransactions = async (): Promise<RecentTransaction[]> => {
   const res = await api.get('/dashboard/recent-transactions');
   return res.data;
 };
+export const getUsersPerformance = async (range: string) => {
 
-export default { getSummary, getTopItems, getRevenue, getRecentTransactions }; 
+  const res = await api.get(`/dashboard/users-performance?range=${range}`);
+  return res.data;
+};
+
+export default { getSummary, getTopItems, getRevenue, getRecentTransactions,getUsersPerformance  };

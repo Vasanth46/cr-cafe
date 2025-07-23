@@ -1,3 +1,8 @@
+.dashboardPage_cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .dashboardPage_root {
   min-height: 100vh;
   background: #e3eed4;
@@ -30,12 +35,35 @@
   min-height: 90px;
   justify-content: center;
 }
+.dashboardPage_cardIcon {
+  width: 28px;
+  height: 28px;
+  color: #375534;
+  margin-bottom: 0.5rem;
+}
 .dashboardPage_cardTitle {
   color: #6B9071;
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.3rem;
   letter-spacing: 0.01em;
+}
+.dashboardPage_cardTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #6B9071;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.01em;
+}
+
+.dashboardPage_cardIconInline {
+  width: 20px;
+  height: 20px;
+  color: #375534;
 }
 .dashboardPage_cardValue {
   color: #0F2A1D;
@@ -73,11 +101,14 @@
   justify-content: center;
 }
 .dashboardPage_sectionTitle {
+  display: flex;
+  align-items: center;
   font-weight: bold;
   color: #0F2A1D;
   font-size: 1.35rem;
   margin-bottom: 1.2rem;
   letter-spacing: 0.01em;
+  gap: 0.6rem;
 }
 .dashboardPage_sectionTitleRow {
   display: flex;
@@ -135,15 +166,16 @@
 .dashboardPage_chartToggle {
   display: inline-flex;
   background: #f7faf3;
-  border-radius: 1.1rem;
-  box-shadow: 0 1px 4px rgba(55,85,52,0.04);
+  border-radius: 2rem;
+  box-shadow: 0 1px 4px rgba(55, 85, 52, 0.08);
   overflow: hidden;
-  border: 1.2px solid #AEC3B0;
-  padding: 0.08rem 0.08rem;
-  margin-right: 0.2rem;
-  transition: box-shadow 0.18s, border 0.18s;
-  height: 2.1rem;
+  border: 1.5px solid #AEC3B0;
+  padding: 0.1rem;
+  margin-right: 0.5rem;
+  height: 2.3rem;
+  transition: all 0.25s ease-in-out;
 }
+
 .dashboardPage_chartToggle button {
   border: none;
   outline: none;
@@ -172,4 +204,51 @@
   box-shadow: 0 1px 4px rgba(55,85,52,0.10);
   border: 1.2px solid #23402a;
   z-index: 2;
-} 
+}
+.tableRowEven {
+  background-color: #f5f9f6;
+}
+
+.tableRowOdd {
+  background-color: #ffffff;
+}
+
+.tableRowHover:hover {
+  background-color: #e3eed4;
+  transition: background-color 0.2s ease;
+}
+.dashboardPage_rangeToggle {
+  display: inline-flex;
+  background: #f7faf3;
+  border-radius: 1.1rem;
+  border: 1.2px solid #AEC3B0;
+  box-shadow: 0 1px 4px rgba(55, 85, 52, 0.04);
+  overflow: hidden;
+  padding: 0.08rem;
+  height: 2.1rem;
+}
+
+.dashboardPage_rangeButton {
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #375534;
+  font-size: 0.93rem;
+  font-weight: 500;
+  padding: 0.3rem 1.1rem;
+  cursor: pointer;
+  border-radius: 1rem;
+  transition: background 0.25s, color 0.25s;
+}
+
+.dashboardPage_rangeButton:hover {
+  background-color: #d9e9cf;
+  color: #23402a;
+}
+
+.dashboardPage_rangeButtonActive {
+  background-color: #23402a;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}

@@ -19,7 +19,7 @@ public class JwtUtil {
     // A secure, randomly generated key for signing the token.
     // In a real production app, this should be loaded from a secure configuration source.
     private final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 hours
+    private static final long EXPIRATION_TIME = 1000 * 60 * 60; // 1 hours
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

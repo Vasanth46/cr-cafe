@@ -7,6 +7,7 @@ import com.crcafe.core.model.OrderItem;
 import com.crcafe.core.repository.BillRepository;
 import com.crcafe.core.repository.OrderItemRepository;
 import com.crcafe.core.repository.OrderRepository;
+import com.crcafe.core.repository.UserOrderCountProjection;
 import com.crcafe.core.service.DashboardService;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DashboardServiceImpl implements DashboardService {
@@ -57,7 +58,6 @@ public class DashboardServiceImpl implements DashboardService {
                 .filter(o -> o.getOrderDate() != null &&
                         !o.getOrderDate().isBefore(startOfDay) && !o.getOrderDate().isAfter(endOfDay))
                 .count();
-
         return new DashboardSummaryDto(
                 totalRevenue,
                 totalOrders,
@@ -119,20 +119,40 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public List<Map<String, Object>> getRecentTransactions() {
-        List<Order> orders = orderRepository.findAll();
-        return orders.stream()
-                .sorted((a, b) -> b.getOrderDate().compareTo(a.getOrderDate()))
-                .limit(10)
-                .map(order -> {
-                    Map<String, Object> map = new java.util.HashMap<>();
-                    map.put("customer", order.getUser() != null ? order.getUser().getUsername() : "-");
-                    map.put("items", order.getOrderItems() != null ? order.getOrderItems().stream()
-                        .map(oi -> oi.getItem() != null ? oi.getItem().getName() : "-")
-                        .toList() : java.util.Collections.emptyList());
-                    map.put("value", order.getTotalAmount());
-                    map.put("date", order.getOrderDate());
+        List<Object[]> rows = billRepository.fetchRecentTransactions();
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Object[] row : rows) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id", row[0]);
+            map.put("handled_by", row[1]);
+            map.put("order_id", row[2]);
+            map.put("receipt_id", row[3]);
+            map.put("final_amount", row[4]);
+            map.put("date", row[5]);
+            result.add(map);
+        }
+        return result;
+    }
+
+    @Override
+    public List<Map<String,Object>> getUsersPerformance(String range) {
+
+        List<UserOrderCountProjection> projections = switch (range.toLowerCase()) {
+            case "day" -> orderRepository.getOrdersGroupedByUserForToday();
+            case "week" -> orderRepository.getOrdersGroupedByUserForThisWeek();
+            case "month" -> orderRepository.getOrdersGroupedByUserForThisMonth();
+            default -> throw new IllegalArgumentException("Invalid range: " + range);
+        };
+
+        // Convert the projection list to a simple list of maps before returning
+        return projections.stream()
+                .map(p -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("username", p.getUsername());
+                    map.put("orders", p.getOrders());
                     return map;
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 } 

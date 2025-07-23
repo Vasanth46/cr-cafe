@@ -22,13 +22,11 @@ export interface OrderItem {
   notes?: string;
 }
 
-export interface Order {
-  id: string;
-  items: OrderItem[];
-  subtotal: number;
-  discount?: number;
-  total: number;
-  createdAt: string;
-  customerName?: string;
-  table?: string;
-} 
+export interface RecentTransaction {
+  user_id: string;
+  handled_by: string;
+  order_id: string;
+  receipt_id: string;
+  final_amount: number;
+  date: string; // or `Date` if you're parsing it on frontend
+}

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException; // Import this
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,17 +17,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This class acts as a global exception handler for the entire API.
- * It catches specific exceptions and formats them into a clean JSON response.
- */
 @ControllerAdvice
 public class RestExceptionHandler {
 
     /**
-     * This handler catches validation errors from @Valid.
-     * It formats the errors into a map of field names to error messages.
+     * --- NEW HANDLER ---
+     * This handler catches the specific exception for a failed login attempt.
+     *
+     * @param ex The BadCredentialsException that was thrown.
+     * @return A ResponseEntity with a 401 UNAUTHORIZED status.
      */
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        ApiErrorResponse errorResponse = new ApiErrorResponse(
+                HttpStatus.UNAUTHORIZED.value(),
+                "Invalid username or password.",
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         Map<String, List<String>> errors = new HashMap<>();
@@ -45,10 +55,6 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * This handler specifically catches the IllegalStateException we throw
-     * when a bill already exists for an order.
-     */
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Object> handleIllegalStateException(IllegalStateException ex, WebRequest request) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
@@ -59,10 +65,6 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
-    /**
-     * This handler catches exceptions thrown when a database entity (like a User, Item, or Order)
-     * cannot be found.
-     */
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex, WebRequest request) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
@@ -73,10 +75,6 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    /**
-     * This handler catches security exceptions when an authenticated user
-     * tries to access a resource they are not authorized to use.
-     */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
         ApiErrorResponse errorResponse = new ApiErrorResponse(
@@ -87,15 +85,9 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
-    /**
-     * A catch-all handler for any other unexpected exceptions.
-     * This prevents generic, unhelpful server error pages from being shown.
-     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllUncaughtException(Exception ex, WebRequest request) {
-        // It's a good practice to log the full exception for debugging purposes
         ex.printStackTrace();
-
         ApiErrorResponse errorResponse = new ApiErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "An unexpected error occurred. Please contact support.",

@@ -1,6 +1,7 @@
 package com.crcafe.api.controller;
 
 import com.crcafe.core.dto.DashboardSummaryDto;
+import com.crcafe.core.repository.UserOrderCountProjection;
 import com.crcafe.core.service.DashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -43,5 +44,11 @@ public class DashboardController {
     @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER')")
     public ResponseEntity<List<Map<String, Object>>> getRecentTransactions() {
         return ResponseEntity.ok(dashboardService.getRecentTransactions());
+    }
+    @GetMapping("/users-performance")
+    @PreAuthorize("hasRole('OWNER') or hasRole('MANAGER')")
+    public ResponseEntity<List<Map<String,Object>>> getUserPerformance(
+            @RequestParam(defaultValue = "day") String range) {
+        return ResponseEntity.ok(dashboardService.getUsersPerformance(range));
     }
 } 

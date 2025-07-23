@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ### COPY the token from the response above and paste it into the variable below.
-@owner_token = eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9PV05FUiJ9XSwic3ViIjoib3duZXIiLCJpYXQiOjE3NTI4Mjk0NTIsImV4cCI6MTc1Mjg2NTQ1Mn0.zya1kpzQOWVEVo0EcHH_-Wk0f7IPS61GqdjK87TUK84
+@owner_token = eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9PV05FUiJ9XSwic3ViIjoib3duZXIiLCJpYXQiOjE3NTMxOTE2OTQsImV4cCI6MTc1MzIyNzY5NH0.Te4xfMLr0t05UWUa6RyC8OhNeEongyWSA34FsXt1JPI
 
 
 ### =================================================================
@@ -94,8 +94,8 @@ Authorization: Bearer {{owner_token}}
 Content-Type: application/json
 
 {
-  "username": "new_worker_sam6",
-  "password": "password456",
+  "username": "dani",
+  "password": "danipass",
   "role": "WORKER"
 }
 

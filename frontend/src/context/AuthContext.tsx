@@ -42,9 +42,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       localStorage.setItem('token', token);
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      console.error('Login failed:', err);
+
+      // This line checks if the backend sent a specific error message.
+      // If it did, it uses that message. Otherwise, it uses a generic one.
+
+      let errorMessage = 'Something went wrong. Please try again.';
+
+      if (err.response) {
+        const status = err.response.status;
+
+        if (status === 401 || status === 403) {
+          errorMessage = 'Invalid username or password. Please try again.';
+        } else if (status >= 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else {
+          // If backend sends a specific message
+          errorMessage = err.response.data?.message || errorMessage;
+        }
+      } else if (err.request) {
+        // No response was received – backend might be down
+        errorMessage = 'Server unreachable. Please check your internet or try again later.';
+      } else {
+        errorMessage = 'Unexpected error occurred.';
+      }
+      setError(errorMessage); // Set the specific error message to be displayed
+
       setUser(null);
       setToken(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     } finally {
       setLoading(false);
     }
