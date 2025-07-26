@@ -51,7 +51,7 @@ public class JwtUtil {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         // Add user roles to the token claims
-        long expirationTimeInMillis = 1000 * 60 * 15;
+        long expirationTimeInMillis = 1000 * 60 * 60;
         claims.put("roles", userDetails.getAuthorities());
         return createToken(claims, userDetails.getUsername(),expirationTimeInMillis);
     }
