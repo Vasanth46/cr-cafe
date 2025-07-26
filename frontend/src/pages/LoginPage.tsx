@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import styles from './LoginPage.module.css';
 import character from '../assets/character.png';
+import { useToaster } from '../components/Toaster';
 
 const LoginPage: React.FC = () => {
   const { login, loading, error, user } = useAuth();
@@ -10,22 +11,25 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [formError, setFormError] = useState('');
   const navigate = useNavigate();
+  const { showToast } = useToaster();
 
   React.useEffect(() => {
     if (user) {
+      showToast('Login successful!', 'success');
       if (user.role === 'OWNER') {
         navigate('/dashboard');
       } else {
         navigate('/menu');
       }
     }
-  }, [user, navigate]);
+  }, [user, navigate, showToast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
     if (!username || !password) {
       setFormError('Please enter both username and password.');
+      showToast('Please enter both username and password.', 'error');
       return;
     }
     await login(username, password);
@@ -62,9 +66,7 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={e => setPassword(e.target.value)}
             />
-            {(formError || error) && (
-              <div className={styles.loginPage_error}>{formError || error}</div>
-            )}
+            {(formError || error) && null}
             <button
               type="submit"
               className={styles.loginPage_button}

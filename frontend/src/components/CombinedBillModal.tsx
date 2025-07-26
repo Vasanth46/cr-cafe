@@ -2,8 +2,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import styles from './BillPreviewModal.module.css';
 import PrintableReceipt from './PrintableReceipt';
-import TokenSlip from './TokenSlip';
-import PrintableJob from './PrintableJob';
 
 interface BillResultModalProps {
   open: boolean;
@@ -17,20 +15,29 @@ const BillResultModal: React.FC<BillResultModalProps> = ({ open, bill, user, onP
   if (!open || !bill) return null;
 
   const handlePrint = () => {
+    // 1. Find or create a dedicated container for printing at the top level
     let printContainer = document.getElementById('printable-receipt-container');
     if (!printContainer) {
       printContainer = document.createElement('div');
       printContainer.id = 'printable-receipt-container';
       document.body.appendChild(printContainer);
     }
+
+    // 2. Render the receipt into the container using a React 18+ portal
     const root = createRoot(printContainer);
-    root.render(<PrintableJob bill={bill} order={bill.order} user={user} />);
+    root.render(<PrintableReceipt bill={bill} order={bill.order} user={user} />);
+
+    // 3. Print after a short delay to ensure the DOM is updated
     setTimeout(() => {
       window.print();
+
+      // 4. Clean up the container from the DOM after printing
       root.unmount();
       if (printContainer) {
         document.body.removeChild(printContainer);
       }
+
+      // 5. Automatically close the modal
       onClose();
     }, 100);
   };
@@ -46,13 +53,11 @@ const BillResultModal: React.FC<BillResultModalProps> = ({ open, bill, user, onP
             Bill Preview
           </div>
           <div className={styles.modalReceiptScroll}>
-            {/* Preview both receipt and token slip */}
             <PrintableReceipt bill={bill} order={bill.order} user={user} />
-            <TokenSlip bill={bill} order={bill.order} />
           </div>
           <div className={styles.modalActions}>
             <button className={styles.billPreviewModal_btn} onClick={handlePrint}>
-              Print Receipt & Token
+              Print Receipt
             </button>
           </div>
         </div>

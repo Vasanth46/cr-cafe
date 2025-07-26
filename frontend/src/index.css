@@ -3,3 +3,22 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; background: #E3EED4; color: #0F2A1D; }
 #root { min-height: 100vh; display: flex; flex-direction: column; font-family: 'Poppins', 'Segoe UI', Arial, sans-serif; }
+
+@media print {
+  /* Hide the entire React application */
+  body > #root {
+    display: none !important;
+  }
+
+  /* Make sure the dedicated print container is the only thing visible */
+  #printable-receipt-container {
+    display: block !important;
+  }
+  
+  /* Remove default browser headers and footers */
+  @page {
+    size: auto;
+    margin: 0;
+  }
+}
+  

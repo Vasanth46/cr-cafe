@@ -7,14 +7,27 @@ interface LoginResponse {
 }
 
 const login = async (username: string, password: string): Promise<LoginResponse> => {
-  const res = await api.post('/auth/login', { username, password });
-  // Map backend response to expected shape and strip 'ROLE_' prefix
-  const { token, id, username: uname, role ,profileImageUrl} = res.data;
-  const cleanRole = role.startsWith('ROLE_') ? role.replace('ROLE_', '') : role;
-  return {
-    token,
-    user: { id: String(id), username: uname, role: cleanRole ,profileImageUrl},
-  };
+  try {
+    const res = await api.post('/auth/login', { username, password });
+    // Map backend response to expected shape and strip 'ROLE_' prefix
+    const { token, id, username: uname, role, profileImageUrl } = res.data;
+    const cleanRole = role.startsWith('ROLE_') ? role.replace('ROLE_', '') : role;
+    return {
+      token,
+      user: { id: String(id), username: uname, role: cleanRole, profileImageUrl },
+    };
+  } catch (err: any) {
+    if (err.response) {
+      if (err.response.status === 401) {
+        throw new Error('Invalid username or password.');
+      } else if (err.response.status === 403) {
+        throw new Error('Your account does not have access.');
+      } else if (err.response.data && err.response.data.message) {
+        throw new Error(err.response.data.message);
+      }
+    }
+    throw new Error('Login failed. Please try again.');
+  }
 };
 
 const getProfile = async (token: string): Promise<User> => {

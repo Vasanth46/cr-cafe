@@ -6,6 +6,10 @@ import styles from './DashboardPage.module.css';
 import logo from '../assets/logo.jpg';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
+import { getTodaysRevenueByPaymentMode } from '../services/dashboardService';
+import { getRecentTransactionsPaginated } from '../services/dashboardService';
+import { getRecentTransactionsWithFilters, getAllCashiers } from '../services/dashboardService';
+import { Filter } from 'lucide-react';
 
 const cafeColors = ['#0F2A1D', '#375534', '#6B9071', '#AEC3B0', '#E3EED4'];
 
@@ -22,6 +26,23 @@ const DashboardPage: React.FC = () => {
   const [usersPerformance, setUsersPerformance] = useState<any>(null);
   const [usersRange, setUsersRange] = useState('day');
   const [usersLoading, setUsersLoading] = useState(false);
+  const [revenueByPaymentMode, setRevenueByPaymentMode] = useState<{ [key: string]: number }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalTransactions, setTotalTransactions] = useState(0);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [cashiers, setCashiers] = useState<string[]>([]);
+  const [filters, setFilters] = useState({
+    cashier: '',
+    minValue: '',
+    maxValue: '',
+    startDate: '',
+    endDate: '',
+    paymentMode: ''
+  });
+  const [appliedFilters, setAppliedFilters] = useState<{[key: string]: string}>({});
+  const [filtersLoading, setFiltersLoading] = useState(false);
 
   useEffect(() => {
     setUsersLoading(true);
@@ -39,13 +60,41 @@ const DashboardPage: React.FC = () => {
       dashboardService.getSummary(),
       dashboardService.getTopItems(),
       dashboardService.getRevenue(range),
-      dashboardService.getRecentTransactions()
-    ]).then(([summary, topItems, revenue, recentTx]) => {
+      getTodaysRevenueByPaymentMode()
+    ]).then(([summary, topItems, revenue, revenueByPaymentMode]) => {
       setSummary(summary);
       setTopItems(topItems);
       setRevenue(revenue);
-      setRecentTransactions(recentTx);
+      setRevenueByPaymentMode(revenueByPaymentMode || {});
     }).finally(() => setLoading(false));
+  }, []);
+  useEffect(() => {
+    setTransactionsLoading(true);
+    if (Object.keys(appliedFilters).length === 0) {
+      getRecentTransactionsPaginated(currentPage, 10)
+        .then((data) => {
+          setRecentTransactions(data.transactions || []);
+          setTotalPages(data.totalPages || 1);
+          setTotalTransactions(data.totalCount || 0);
+        })
+        .catch(err => console.error("Failed to fetch recent transactions", err))
+        .finally(() => setTransactionsLoading(false));
+    } else {
+      getRecentTransactionsWithFilters(currentPage, 10, appliedFilters)
+        .then((data) => {
+          setRecentTransactions(data.transactions || []);
+          setTotalPages(data.totalPages || 1);
+          setTotalTransactions(data.totalCount || 0);
+        })
+        .catch(err => console.error("Failed to fetch filtered transactions", err))
+        .finally(() => setTransactionsLoading(false));
+    }
+  }, [currentPage, appliedFilters]);
+
+  useEffect(() => {
+    getAllCashiers()
+      .then(data => setCashiers(data))
+      .catch(err => console.error("Failed to fetch cashiers", err));
   }, []);
 
   useEffect(() => {
@@ -57,7 +106,7 @@ const DashboardPage: React.FC = () => {
   const formattedUserData = usersPerformance && usersPerformance.length > 0
       ? [{
         name: 'Orders',
-        ...usersPerformance.reduce((acc, user) => {
+        ...usersPerformance.reduce((acc: { [key: string]: number }, user: { username: string, orders: number }) => {
           acc[user.username] = user.orders;
           return acc;
         }, {})
@@ -69,13 +118,132 @@ const DashboardPage: React.FC = () => {
   const hasRevenueData = Array.isArray(revenue) && revenue.length > 0;
   const hasTopItems = Array.isArray(topItems) && topItems.length > 0;
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const applyFilters = () => {
+    const newAppliedFilters: {[key: string]: string} = {};
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value && value.trim() !== '') {
+        newAppliedFilters[key] = value;
+      }
+    });
+    setAppliedFilters(newAppliedFilters);
+    setCurrentPage(1); // Reset to first page when applying filters
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      cashier: '',
+      minValue: '',
+      maxValue: '',
+      startDate: '',
+      endDate: '',
+      paymentMode: ''
+    });
+    setAppliedFilters({});
+    setCurrentPage(1);
+  };
+
+  const removeFilter = (key: string) => {
+    const newAppliedFilters = { ...appliedFilters };
+    delete newAppliedFilters[key];
+    setAppliedFilters(newAppliedFilters);
+    setFilters(prev => ({ ...prev, [key]: '' }));
+    setCurrentPage(1);
+  };
+
+  const getFilterDisplayName = (key: string, value: string) => {
+    switch (key) {
+      case 'cashier': return `Cashier: ${value}`;
+      case 'minValue': return `Min Value: ₹${value}`;
+      case 'maxValue': return `Max Value: ₹${value}`;
+      case 'startDate': return `From: ${new Date(value).toLocaleDateString()}`;
+      case 'endDate': return `To: ${new Date(value).toLocaleDateString()}`;
+      case 'paymentMode': return `Payment: ${value}`;
+      default: return `${key}: ${value}`;
+    }
+  };
+
+  const renderPagination = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 3; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 2; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+
+    return (
+      <div className={styles.paginationContainer}>
+        <button
+          className={styles.paginationButton}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          &lt;
+        </button>
+        
+        <div className={styles.pageNumbers}>
+          {pages.map((page, index) => (
+            page === '...' ? (
+              <span key={`ellipsis-${index}`} className={styles.ellipsis}>
+                ...
+              </span>
+            ) : (
+              <button
+                key={page}
+                className={`${styles.pageNumber} ${page === currentPage ? styles.activePage : ''}`}
+                onClick={() => handlePageChange(page as number)}
+              >
+                {page}
+              </button>
+            )
+          ))}
+        </div>
+        
+        <button
+          className={styles.paginationButton}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          &gt;
+        </button>
+      </div>
+    );
+  };
+
   return (
-    <Layout orderCount={summary?.totalOrders || 0} user={{
-      name: user?.username || '',
-      role: user?.role || '',
-      email: user?.email || undefined,
-    }}>
-      <div style={{ padding: '0 2.5rem', marginTop: '2.2rem' }}>
+    <Layout>
+      <div style={{ padding: '0 2.5rem', marginTop: '2.2rem', marginBottom: '2rem' }}>
         <div className={styles.dashboardPage_cards}>
           <div className={styles.dashboardPage_card}>
             <div className={styles.dashboardPage_cardTitleRow}>
@@ -118,6 +286,24 @@ const DashboardPage: React.FC = () => {
             </div>
             <div className={styles.dashboardPage_cardValue}>
               ₹{summary?.todaysRevenue?.toLocaleString() || 0}
+            </div>
+          </div>
+          <div className={styles.dashboardPage_card}>
+            <div className={styles.dashboardPage_cardTitleRow}>
+              <TrendingUp className={styles.dashboardPage_cardIconInline} />
+              <span>Today's Revenue (Cash)</span>
+            </div>
+            <div className={styles.dashboardPage_cardValue}>
+              ₹{revenueByPaymentMode?.CASH?.toLocaleString() || 0}
+            </div>
+          </div>
+          <div className={styles.dashboardPage_card}>
+            <div className={styles.dashboardPage_cardTitleRow}>
+              <TrendingUp className={styles.dashboardPage_cardIconInline} />
+              <span>Today's Revenue (Online)</span>
+            </div>
+            <div className={styles.dashboardPage_cardValue}>
+              ₹{(revenueByPaymentMode?.ONLINE || revenueByPaymentMode?.UPI || 0).toLocaleString()}
             </div>
           </div>
           <div className={styles.dashboardPage_card}>
@@ -211,7 +397,7 @@ const DashboardPage: React.FC = () => {
                                   cursor={{ stroke: '#AEC3B0', strokeWidth: 1 }}
                               />
 
-                              {usersPerformance.map((user, index) => (
+                              {usersPerformance.map((user: { username: string }, index: number) => (
                                   <Line
                                       key={user.username}
                                       type="monotone"
@@ -325,42 +511,170 @@ const DashboardPage: React.FC = () => {
             <FileClockIcon className={styles.dashboardPage_cardIconInline} />
             Recent Transactions
           </div>
-          <div style={{ width: '100%', height: 260, overflowY: 'auto' }}>
-            {recentTransactions.length === 0 ? (
+          <div className={styles.filterContainer}>
+            <div></div> {/* Empty div for left side spacing */}
+            <div className={styles.filterControls}>
+              <button
+                className={`${styles.filterButton} ${showFilters ? styles.active : ''}`}
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <Filter size={16} />
+                Filters
+              </button>
+              {Object.keys(appliedFilters).length > 0 && (
+                <button
+                  className={styles.clearFiltersButton}
+                  onClick={clearFilters}
+                >
+                  Clear All Filters
+                </button>
+              )}
+            </div>
+          </div>
+
+          {showFilters && (
+            <div className={styles.filterPanel}>
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Cashier</label>
+                <select
+                  className={styles.filterSelect}
+                  value={filters.cashier}
+                  onChange={(e) => handleFilterChange('cashier', e.target.value)}
+                >
+                  <option value="">All Cashiers</option>
+                  {cashiers.map(cashier => (
+                    <option key={cashier} value={cashier}>{cashier}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Value Range</label>
+                <div className={styles.valueRangeContainer}>
+                  <input
+                    type="number"
+                    className={styles.filterInput}
+                    placeholder="Min Value"
+                    value={filters.minValue}
+                    onChange={(e) => handleFilterChange('minValue', e.target.value)}
+                  />
+                  <span>-</span>
+                  <input
+                    type="number"
+                    className={styles.filterInput}
+                    placeholder="Max Value"
+                    value={filters.maxValue}
+                    onChange={(e) => handleFilterChange('maxValue', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Date Range</label>
+                <div className={styles.dateRangeContainer}>
+                  <input
+                    type="date"
+                    className={styles.filterInput}
+                    value={filters.startDate}
+                    onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                  />
+                  <span>-</span>
+                  <input
+                    type="date"
+                    className={styles.filterInput}
+                    value={filters.endDate}
+                    onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <label className={styles.filterLabel}>Payment Mode</label>
+                <select
+                  className={styles.filterSelect}
+                  value={filters.paymentMode}
+                  onChange={(e) => handleFilterChange('paymentMode', e.target.value)}
+                >
+                  <option value="">All Payment Modes</option>
+                  <option value="CASH">Cash</option>
+                  <option value="ONLINE">Online</option>
+                </select>
+              </div>
+
+              <div className={styles.filterActions}>
+                <button
+                  className={styles.applyFiltersButton}
+                  onClick={applyFilters}
+                >
+                  Apply Filters
+                </button>
+                <button
+                  className={styles.clearFiltersButton}
+                  onClick={clearFilters}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          )}
+
+          {Object.keys(appliedFilters).length > 0 && (
+            <div className={styles.activeFilters}>
+              {Object.entries(appliedFilters).map(([key, value]) => (
+                <span key={key} className={styles.activeFilterTag}>
+                  {getFilterDisplayName(key, value)}
+                  <button
+                    className={styles.removeFilterButton}
+                    onClick={() => removeFilter(key)}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+          <div style={{ width: '100%', minHeight: 480 }}>
+           {transactionsLoading ? (
+             <div className={styles.dashboardPage_emptyState}>Loading transactions...</div>
+           ) : recentTransactions.length === 0 ? (
               <div className={styles.dashboardPage_emptyState}>No recent transactions available.</div>
             ) : (
-              <table className={styles.dashboardPage_table}>
-                <thead style={{ backgroundColor: '#375534', color: 'white' }}>
-                  <tr>
-                    <th>Handled By</th>
-                    <th>Order Id</th>
-                    <th>Receipt Id</th>
-                    <th>Value</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentTransactions.map((tx, idx) => (
-                      <tr
-                          key={idx}
-                          className={`${idx % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd} ${styles.tableRowHover}`}
-                      >
-
-                    <td>{tx.handled_by}</td>
-                      <td>{tx.order_id}</td>
-                      <td>{tx.receipt_id}</td>
-                      <td>₹{tx.final_amount}</td>
-                      <td>{tx.date ? new Date(tx.date).toLocaleDateString('en-IN', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      }) : ''}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+             <>
+               <table className={styles.dashboardPage_table}>
+                 <thead style={{ backgroundColor: '#375534', color: 'white' }}>
+                   <tr>
+                     <th>Cashier</th>
+                     <th>Order Id</th>
+                     <th>Receipt Id</th>
+                     <th>Value</th>
+                     <th>Payment Mode</th>
+                     <th>Date</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {recentTransactions.map((tx, idx) => (
+                       <tr
+                           key={idx}
+                           className={`${idx % 2 === 0 ? styles.tableRowEven : styles.tableRowOdd} ${styles.tableRowHover}`}
+                       >
+                     <td>{tx.handled_by}</td>
+                       <td>{tx.order_id}</td>
+                       <td>{tx.receipt_id}</td>
+                       <td>₹{tx.final_amount}</td>
+                       <td>{tx.payment_mode}</td>
+                       <td>{tx.date ? new Date(tx.date).toLocaleDateString('en-IN', {
+                         day: '2-digit',
+                         month: 'short',
+                         year: 'numeric',
+                         hour: '2-digit',
+                         minute: '2-digit',
+                       }) : ''}</td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+               {renderPagination()}
+             </>
             )}
           </div>
         </div>

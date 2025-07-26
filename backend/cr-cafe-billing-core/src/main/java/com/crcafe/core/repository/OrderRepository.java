@@ -3,10 +3,12 @@ package com.crcafe.core.repository;
 import com.crcafe.core.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository for Order entities.
@@ -22,6 +24,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @return A list of orders within the given dates.
      */
     List<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
+    long countByOrderDateBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT u.username AS username, COUNT(o) AS orders FROM Order o JOIN o.user u WHERE o.orderDate >= :startDate AND o.orderDate <= :endDate GROUP BY u.username")
+    List<UserOrderCountProjection> findUserOrderCounts(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
     @Query("""
         SELECT u.username AS username, COUNT(o.id) AS orders
         FROM Order o
@@ -48,4 +56,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         GROUP BY u.username
     """)
     List<UserOrderCountProjection> getOrdersGroupedByUserForThisMonth();
+
+    Optional<Order> findById(Long id);
+
+    List<Order> findAllByOrderByOrderDateDesc();
+
+    // Query to count orders for a specific user on a specific day
+    @Query("SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.orderDate >= :startOfDay AND o.orderDate <= :endOfDay")
+    long countByUserIdAndOrderDateBetween(
+        @Param("userId") Long userId, 
+        @Param("startOfDay") LocalDateTime startOfDay, 
+        @Param("endOfDay") LocalDateTime endOfDay
+    );
 }

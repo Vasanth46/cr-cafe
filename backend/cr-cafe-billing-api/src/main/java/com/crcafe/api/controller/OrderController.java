@@ -1,5 +1,6 @@
 package com.crcafe.api.controller;
 
+import com.crcafe.api.config.ApiPaths;
 import com.crcafe.api.dto.OrderRequestDto;
 import com.crcafe.api.dto.response.BillResponseDto;
 import com.crcafe.api.dto.response.OrderItemResponseDto;
@@ -9,29 +10,33 @@ import com.crcafe.core.model.Bill;
 import com.crcafe.core.model.Item;
 import com.crcafe.core.model.Order;
 import com.crcafe.core.model.OrderItem;
+import com.crcafe.core.model.PaymentMode;
+import com.crcafe.core.model.User;
+import com.crcafe.core.repository.UserRepository;
 import com.crcafe.core.service.OrderService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 import java.util.List;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @RestController
-@RequestMapping("/api/orders")
+@RequestMapping(ApiPaths.ORDERS_ROOT)
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
-
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
+    private final UserRepository userRepository; // Inject UserRepository
 
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<OrderResponseDto> createOrder(@Valid @RequestBody OrderRequestDto orderRequest) {
-        List<OrderItem> orderItems = orderRequest.getItems().stream().map(dto -> {
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'WORKER')")
+    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody @Valid OrderRequestDto orderRequestDto) {
+        List<OrderItem> orderItems = orderRequestDto.getItems().stream().map(dto -> {
             OrderItem orderItem = new OrderItem();
             Item item = new Item();
             item.setId(dto.getItemId());
@@ -40,15 +45,48 @@ public class OrderController {
             return orderItem;
         }).collect(Collectors.toList());
 
-        Order createdOrder = orderService.createOrder(orderItems, orderRequest.getUserId());
+        Order createdOrder = orderService.createOrder(orderItems, orderRequestDto.getUserId());
         return ResponseEntity.ok(toOrderResponseDto(createdOrder));
     }
 
     @PostMapping("/{orderId}/bill")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<BillResponseDto> generateBill(@PathVariable Long orderId, @RequestParam(required = false) Long discountId) {
-        Bill bill = orderService.generateBill(orderId, discountId);
+    public ResponseEntity<BillResponseDto> generateBill(
+            @PathVariable Long orderId, 
+            @RequestParam(required = false) Long discountId,
+            @RequestParam(defaultValue = "CASH") PaymentMode paymentMode) {
+        Bill bill = orderService.generateBill(orderId, discountId, paymentMode);
         return ResponseEntity.ok(toBillResponseDto(bill));
+    }
+
+    @GetMapping(ApiPaths.ORDERS_TODAY_COUNT)
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER')")
+    public ResponseEntity<Long> getTodaysOrderCount() {
+        // Safely get the username from the security context
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+
+        // Fetch the user entity from the repository
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        
+        long count = orderService.getTodaysOrderCountForUser(currentUser.getId());
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping(ApiPaths.ORDERS_MY_DAY_COUNT)
+    @PreAuthorize("hasAnyRole('OWNER', 'MANAGER', 'WORKER')")
+    public ResponseEntity<Long> getMyTodaysOrderCount() {
+        // Safely get the username from the security context
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userDetails.getUsername();
+
+        // Fetch the user entity from the repository
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
+        
+        long count = orderService.getTodaysOrderCountForUser(currentUser.getId());
+        return ResponseEntity.ok(count);
     }
 
     // --- Helper methods to convert entities to DTOs ---
@@ -62,6 +100,7 @@ public class OrderController {
         dto.setDiscount(bill.getDiscount());
         dto.setFinalAmount(bill.getFinalAmount());
         dto.setReceiptId(bill.getReceiptId());
+        dto.setPaymentMode(bill.getPaymentMode());
         return dto;
     }
 

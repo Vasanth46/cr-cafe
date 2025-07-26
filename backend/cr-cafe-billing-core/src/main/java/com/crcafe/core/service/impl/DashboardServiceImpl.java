@@ -136,6 +136,73 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
+    public Map<String, Object> getRecentTransactionsPaginated(int page, int size) {
+        int offset = (page - 1) * size;
+        List<Object[]> rows = billRepository.fetchRecentTransactionsPaginated(size, offset);
+        long totalCount = billRepository.countTotalTransactions();
+
+        List<Map<String, Object>> transactions = new ArrayList<>();
+        for (Object[] row : rows) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id", row[0]);
+            map.put("handled_by", row[1]);
+            map.put("order_id", row[2]);
+            map.put("receipt_id", row[3]);
+            map.put("final_amount", row[4]);
+            map.put("date", row[5]);
+            map.put("payment_mode", row[6]);
+            transactions.add(map);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("transactions", transactions);
+        result.put("totalCount", totalCount);
+        result.put("currentPage", page);
+        result.put("totalPages", (int) Math.ceil((double) totalCount / size));
+        result.put("pageSize", size);
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getRecentTransactionsWithFilters(int page, int size, String cashier, 
+            java.math.BigDecimal minValue, java.math.BigDecimal maxValue, 
+            java.time.LocalDateTime startDate, java.time.LocalDateTime endDate, String paymentMode) {
+        int offset = (page - 1) * size;
+        List<Object[]> rows = billRepository.fetchRecentTransactionsWithFilters(
+            cashier, minValue, maxValue, startDate, endDate, paymentMode, size, offset);
+        long totalCount = billRepository.countTotalTransactionsWithFilters(
+            cashier, minValue, maxValue, startDate, endDate, paymentMode);
+
+        List<Map<String, Object>> transactions = new ArrayList<>();
+        for (Object[] row : rows) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("user_id", row[0]);
+            map.put("handled_by", row[1]);
+            map.put("order_id", row[2]);
+            map.put("receipt_id", row[3]);
+            map.put("final_amount", row[4]);
+            map.put("date", row[5]);
+            map.put("payment_mode", row[6]);
+            transactions.add(map);
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("transactions", transactions);
+        result.put("totalCount", totalCount);
+        result.put("currentPage", page);
+        result.put("totalPages", (int) Math.ceil((double) totalCount / size));
+        result.put("pageSize", size);
+
+        return result;
+    }
+
+    @Override
+    public List<String> getAllCashiers() {
+        return billRepository.getAllCashiers();
+    }
+
+    @Override
     public List<Map<String,Object>> getUsersPerformance(String range) {
 
         List<UserOrderCountProjection> projections = switch (range.toLowerCase()) {
@@ -154,5 +221,24 @@ public class DashboardServiceImpl implements DashboardService {
                     return map;
                 })
                 .collect(Collectors.toList());
+    }
+
+    // Add this method to get today's revenue by payment method
+    public Map<String, BigDecimal> getTodaysRevenueByPaymentMode() {
+        List<Bill> bills = billRepository.findAll();
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+        Map<String, BigDecimal> revenueByPaymentMode = new HashMap<>();
+        for (Bill bill : bills) {
+            if (bill.getBillDate() != null &&
+                !bill.getBillDate().isBefore(startOfDay) && !bill.getBillDate().isAfter(endOfDay)) {
+                String paymentMode = bill.getPaymentMode() != null ? bill.getPaymentMode().name() : "UNKNOWN";
+                BigDecimal amount = bill.getFinalAmount() != null ? bill.getFinalAmount() : BigDecimal.ZERO;
+                revenueByPaymentMode.put(paymentMode,
+                    revenueByPaymentMode.getOrDefault(paymentMode, BigDecimal.ZERO).add(amount));
+            }
+        }
+        return revenueByPaymentMode;
     }
 } 

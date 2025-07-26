@@ -1,22 +1,37 @@
 import api from './api';
-import type { Order } from '../types';
+import type { OrderRequestDto, OrderResponseDto, BillResponseDto, PaymentMode } from '../types';
 
-interface CreateOrderPayload {
-  userId: number;
-  items: { itemId: string; quantity: number; }[];
-  customerName?: string;
-  table?: string;
-}
-
-const createOrder = async (payload: CreateOrderPayload): Promise<Order> => {
-  const res = await api.post('/orders', payload);
-  return res.data;
+const createOrder = async (orderData: OrderRequestDto): Promise<OrderResponseDto> => {
+    try {
+        const response = await api.post('/orders', orderData);
+        return response.data;
+    } catch (err: any) {
+        if (err.response && err.response.data && err.response.data.message) {
+            throw new Error(err.response.data.message);
+        }
+        throw new Error('Failed to create order. Please try again.');
+    }
 };
 
-const generateBill = async (orderId: string | number, discountId?: string | number) => {
-  const url = discountId ? `/orders/${orderId}/bill?discountId=${discountId}` : `/orders/${orderId}/bill`;
-  const res = await api.post(url);
-  return res.data;
+const generateBill = async (orderId: number, discountId?: number, paymentMode: PaymentMode = PaymentMode.CASH): Promise<BillResponseDto> => {
+    try {
+        const response = await api.post(`/orders/${orderId}/bill`, null, { params: { discountId, paymentMode } });
+        return response.data;
+    } catch (err: any) {
+        if (err.response && err.response.data && err.response.data.message) {
+            throw new Error(err.response.data.message);
+        }
+        throw new Error('Failed to generate bill. Please try again.');
+    }
 };
 
-export default { createOrder, generateBill }; 
+const getMyTodaysOrderCount = async (): Promise<number> => {
+    const response = await api.get('/orders/my-day-count');
+    return response.data;
+};
+
+export default {
+    createOrder,
+    generateBill,
+    getMyTodaysOrderCount
+}; 

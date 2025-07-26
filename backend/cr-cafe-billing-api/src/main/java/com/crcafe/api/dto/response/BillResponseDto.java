@@ -1,5 +1,6 @@
 package com.crcafe.api.dto.response;
 
+import com.crcafe.core.model.PaymentMode;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,4 +14,5 @@ public class BillResponseDto {
     private BigDecimal discount;
     private BigDecimal finalAmount;
     private String receiptId;
+    private PaymentMode paymentMode;
 }

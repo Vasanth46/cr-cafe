@@ -8,7 +8,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 4px 16px rgba(55,85,52,0.07);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 101;
 }
 .topBar_left {
   display: flex;
@@ -169,15 +169,15 @@
   color: #0F2A1D;
 }
 .topBar_profileMenu {
-  position: absolute;
-  top: 56px;
-  right: 0;
+  position: fixed;
+  top: 80px;
+  right: 20px;
   width: 210px;
   background: #fff;
   border: 1.5px solid #AEC3B0;
   border-radius: 1rem;
   box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-  z-index: 1000;
+  z-index: 99999;
   padding: 1.1rem 1.2rem 0.7rem 1.2rem;
   display: flex;
   flex-direction: column;
@@ -263,4 +263,28 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.topBar_ordersBadge {
+  display: flex;
+  align-items: center;
+  background-color: #E3EED4;
+  border: 1px solid #AEC3B0;
+  border-radius: 12px;
+  padding: 8px 16px;
+  color: #0F2A1D;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.topBar_ordersIcon {
+  margin-right: 8px;
+  color: #375534;
+}
+
+.topBar_ordersText strong {
+  font-weight: 700;
+  color: #0F2A1D;
+  margin-left: 4px;
 }

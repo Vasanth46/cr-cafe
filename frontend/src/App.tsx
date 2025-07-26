@@ -7,26 +7,36 @@ import MenuPage from "./pages/MenuPage";
 import DashboardPage from "./pages/DashboardPage";
 import UsersPage from './pages/UsersPage';
 import './index.css';
+import { ToasterProvider } from './components/Toaster';
+
+// This internal component has access to the Router's context
+const AppContent = () => {
+  return (
+    <AuthProvider>
+      <div className="min-h-screen bg-cafe-light font-sans">
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route element={<ProtectedRoute allowedRoles={["WORKER", "MANAGER"]} />}>
+            <Route path="/menu" element={<MenuPage />} />
+          </Route>
+          <Route element={<ProtectedRoute allowedRoles={["OWNER"]} />}>
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Route>
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="*" element={<LoginPage />} />
+        </Routes>
+      </div>
+    </AuthProvider>
+  );
+};
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-cafe-light font-sans">
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route element={<ProtectedRoute allowedRoles={["WORKER", "MANAGER"]} /> }>
-              <Route path="/menu" element={<MenuPage />} />
-            </Route>
-            <Route element={<ProtectedRoute allowedRoles={["OWNER"]} /> }>
-              <Route path="/dashboard" element={<DashboardPage />} />
-            </Route>
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="*" element={<LoginPage />} />
-          </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
+    <Router>
+      <ToasterProvider>
+        <AppContent />
+      </ToasterProvider>
+    </Router>
   );
 }
 

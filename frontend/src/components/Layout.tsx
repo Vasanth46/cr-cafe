@@ -1,21 +1,32 @@
-import React from 'react';
-import TopBar, { TopBarProps } from './TopBar'; // Adjust path if needed
+import React, { useState, useEffect } from 'react';
+import TopBar from './TopBar';
 import styles from './Layout.module.css';
-import { useAuth } from '../context/AuthContext'; // Adjust path if needed
+import { useAuth } from '../context/AuthContext';
+import orderService from '../services/orderService'; // Import the service
 
 interface LayoutProps {
     children: React.ReactNode;
-    orderCount?: number; // Make orderCount optional
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, orderCount = 0 }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
     const { user } = useAuth();
+    const [orderCount, setOrderCount] = useState(0);
 
-    // Prepare user data for the TopBar
+    useEffect(() => {
+        // Fetch order count only if the user is a WORKER
+        if (user && user.role === 'WORKER') {
+            orderService.getMyTodaysOrderCount()
+                .then(count => {
+                    setOrderCount(count);
+                })
+                .catch(err => console.error("Failed to fetch order count", err));
+        }
+    }, [user]);
+
     const topBarUser = {
         name: user?.username || 'User',
         role: user?.role || 'WORKER',
-        profileImageUrl: user?.profileImageUrl, // Pass the image URL
+        profileImageUrl: user?.profileImageUrl,
     };
 
     return (

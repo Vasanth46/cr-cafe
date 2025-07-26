@@ -22,4 +22,13 @@ public class FinancialSummary {
     private BigDecimal discount;
     private BigDecimal finalAmount;
     private String receiptId;
+    private BigDecimal totalRevenue;
+    private BigDecimal totalDiscount;
+    private long totalOrders;
+
+    public FinancialSummary(BigDecimal totalRevenue, BigDecimal totalDiscount, long totalOrders) {
+        this.totalRevenue = totalRevenue;
+        this.totalDiscount = totalDiscount;
+        this.totalOrders = totalOrders;
+    }
 }

@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Bill generateBill(Long orderId, Long discountId) {
+    public Bill generateBill(Long orderId, Long discountId, PaymentMode paymentMode) {
         if (findBillByOrderId(orderId).isPresent()) {
             throw new IllegalStateException("A bill for order ID " + orderId + " has already been generated.");
         }
@@ -76,6 +78,7 @@ public class OrderServiceImpl implements OrderService {
         Bill bill = new Bill();
         bill.setOrder(order);
         bill.setTotalAmount(order.getTotalAmount());
+        bill.setPaymentMode(paymentMode);
 
         BigDecimal discountPercentage = BigDecimal.ZERO;
         if (discountId != null) {
@@ -106,5 +109,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Bill> findBillByOrderId(Long orderId) {
         return billRepository.findByOrderId(orderId);
+    }
+
+    @Override
+    public long getTodaysOrderCountForUser(Long userId) {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+        return orderRepository.countByUserIdAndOrderDateBetween(userId, startOfDay, endOfDay);
     }
 }

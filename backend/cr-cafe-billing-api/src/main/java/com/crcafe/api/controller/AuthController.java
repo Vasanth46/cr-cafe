@@ -1,5 +1,6 @@
 package com.crcafe.api.controller;
 
+import com.crcafe.api.config.ApiPaths;
 import com.crcafe.api.dto.LoginRequest;
 import com.crcafe.api.dto.LoginResponse;
 import com.crcafe.api.security.JwtUtil;
@@ -8,6 +9,7 @@ import com.crcafe.core.service.UserService; // Import UserService
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,21 +21,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(ApiPaths.AUTH_ROOT)
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UserService userService; // <-- INJECT THE USER SERVICE
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.userService = userService; // <-- INITIALIZE IT
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) throws Exception {
+    @PostMapping(ApiPaths.AUTH_LOGIN)
+    public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest, HttpServletResponse response) throws Exception {
     	System.out.println("IN LOGIN");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
@@ -84,8 +81,8 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+    @PostMapping(ApiPaths.AUTH_REFRESH)
+    public ResponseEntity<?> refreshToken(@RequestBody String refreshToken) {
         if (refreshToken == null || refreshToken.isEmpty()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh token is missing.");
         }

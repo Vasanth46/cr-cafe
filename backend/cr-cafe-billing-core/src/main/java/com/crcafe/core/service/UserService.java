@@ -12,7 +12,10 @@ public interface UserService {
     User createUser(String username, String password, UserRole role, String profileImageUrl);
     Optional<User> findByUsername(String username);
     List<User> findAllUsers();
-    void deleteUser(Long userId);
+    User findUserById(Long id);
+    void deleteUser(Long id);
+    User updateUser(Long id, String username, String role, String profileImageUrl);
+    User getCurrentUser();
      void saveUserRefreshToken(String username, String refreshToken);
 
 }

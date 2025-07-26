@@ -3,7 +3,7 @@ import logo from '../assets/logo.jpg';
 import styles from './TopBar.module.css';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { FiLogOut } from 'react-icons/fi';
+import { LogOut, ClipboardList } from 'lucide-react'; // Import from lucide-react
 
 export interface TopBarProps {
   orderCount: number;
@@ -45,18 +45,20 @@ const TopBar: React.FC<TopBarProps> = ({ orderCount, user }) => {
             <span className={styles.topBar_date}>{today}</span>
           </div>
         </div>
-        <div className={styles.topBar_center}></div>
+        {/* Search bar removed from TopBar */}
         <div className={styles.topBar_right}>
           {user.role !== 'OWNER' && (
-              <span className={styles.topBar_orders}>Total : {orderCount} Orders</span>
+              <div className={styles.topBar_ordersBadge}>
+                <ClipboardList size={16} className={styles.topBar_ordersIcon} /> {/* Use Lucide icon */}
+                <span className={styles.topBar_ordersText}>Today's Orders: <strong>{orderCount}</strong></span>
+              </div>
           )}
-          <button className={styles.topBar_report}>Report</button>
-          <span className={styles.topBar_notification}>🔔</span>
+          {/* Report button and notification icon removed */}
           <div className={styles.topBar_profile} onClick={() => setShowProfileMenu(v => !v)} style={{ cursor: 'pointer', position: 'relative' }}>
-            {user.profileImageUrl ? (
+            {user?.profileImageUrl ? (
                 <img src={user.profileImageUrl} alt={user.name} className={styles.topBar_avatarImage} />
             ) : (
-                <div className={styles.topBar_avatar}>{user.name[0]}</div>
+                <div className={styles.topBar_avatar}>{user?.name?.[0]}</div>
             )}
 
             {showProfileMenu && (
@@ -88,7 +90,7 @@ const TopBar: React.FC<TopBarProps> = ({ orderCount, user }) => {
 
                   <div className={styles.topBar_profileMenuDivider} />
                   <button className={styles.topBar_profileMenuLogout} onClick={handleLogout}>
-                    Log Out <span style={{ marginLeft: '0.7rem', display: 'flex', alignItems: 'center' }}><FiLogOut /></span>
+                    Log Out <span style={{ marginLeft: '0.7rem', display: 'flex', alignItems: 'center' }}><LogOut size={16} /></span>
                   </button>
                 </div>
             )}

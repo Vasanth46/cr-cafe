@@ -20,10 +20,15 @@ api.interceptors.request.use(
 );
 
 // --- NEW REFRESH LOGIC ---
-let isRefreshing = false;
-let failedQueue = [];
+interface FailedQueuePromise {
+  resolve: (token: string | null) => void;
+  reject: (error: any) => void;
+}
 
-const processQueue = (error, token = null) => {
+let isRefreshing = false;
+let failedQueue: FailedQueuePromise[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
     failedQueue.forEach(prom => {
         if (error) {
             prom.reject(error);
@@ -33,6 +38,9 @@ const processQueue = (error, token = null) => {
     });
     failedQueue = [];
 };
+
+// Create a custom event for authorization errors
+const authErrorEvent = new Event('authError');
 
 // Response Interceptor: Handle token expiration and auto-refresh
 api.interceptors.response.use(
@@ -84,8 +92,8 @@ api.interceptors.response.use(
                 processQueue(refreshError, null);
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                // Redirect to login page
-                window.location.replace('/login');
+                // Dispatch the custom event instead of hard redirect
+                window.dispatchEvent(authErrorEvent);
                 return Promise.reject(refreshError);
             } finally {
                 isRefreshing = false;

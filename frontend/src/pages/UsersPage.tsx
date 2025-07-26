@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../services/api'; // Make sure this path is correct for your project
 import styles from './UsersPage.module.css'; // Import the CSS module
 import Layout from '../components/Layout'; // Import the Layout component
+import { type User as UserType } from '../types';
 
 // --- Cloudinary Configuration ---
-// IMPORTANT: Replace these with your own Cloudinary details from your account
-const CLOUDINARY_CLOUD_NAME = "diaem2ifq";
-const CLOUDINARY_UPLOAD_PRESET = "crcafeimg";
+// These values are now sourced from your .env.local file
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 // --- Type Definitions ---
 type UserRole = 'OWNER' | 'MANAGER' | 'WORKER';
@@ -24,11 +25,14 @@ interface AddUserModalProps {
 }
 
 interface UserCardProps {
-    user: User;
+    user: UserType;
 }
 
 // --- Helper function for uploading image to Cloudinary ---
 const uploadImageToCloudinary = async (file: File): Promise<string> => {
+    if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
+        throw new Error("Cloudinary configuration is missing. Please check your .env.local file.");
+    }
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
@@ -57,12 +61,18 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             setImageFile(file);
             setPreviewImage(URL.createObjectURL(file));
         }
+    };
+
+    const handleFileButtonClick = () => {
+        fileInputRef.current?.click();
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +106,18 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => 
     return (
         <div className={styles.modalOverlay}>
             <div className={styles.modal}>
-                <h2 className={styles.modalHeader}>Add New User</h2>
+                {/* Modal close button for theme consistency */}
+                <button
+                    onClick={onClose}
+                    className={styles.modalCloseBtn}
+                    aria-label="Close"
+                    style={{ position: 'absolute', top: 10, right: 10, background: 'none', border: 'none', fontSize: 22, color: '#375534', cursor: 'pointer', zIndex: 3, fontFamily: 'Poppins, Segoe UI, Arial, sans-serif' }}
+                >
+                    ×
+                </button>
+                <h2 className={styles.modalHeader} style={{ fontFamily: 'Poppins, Segoe UI, Arial, sans-serif', color: '#375534', fontWeight: 700 }}>
+                    Add New User
+                </h2>
                 <form onSubmit={handleSubmit}>
                     <div className={styles.inputGroup}>
                         <label className={styles.label}>Username</label>
@@ -116,7 +137,26 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ onClose, onUserAdded }) => 
                     </div>
                     <div className={styles.inputGroup}>
                         <label className={styles.label}>Profile Picture</label>
-                        <input type="file" accept="image/*" onChange={handleFileChange} className={styles.fileInput} />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className={styles.fileInputHidden}
+                            ref={fileInputRef}
+                        />
+                        <button
+                            type="button"
+                            className={styles.fileUploadBtn}
+                            onClick={handleFileButtonClick}
+                        >
+                            {/* Upload icon SVG */}
+                            <svg width="20" height="20" fill="none" viewBox="0 0 20 20" style={{ verticalAlign: 'middle' }}>
+                                <path d="M10 14V4M10 4L6 8M10 4l4 4" stroke="#375534" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <rect x="3" y="14" width="14" height="3" rx="1.5" fill="#375534"/>
+                            </svg>
+                            <span>Upload Image</span>
+                        </button>
+                        {imageFile && <span className={styles.fileName}>{imageFile.name}</span>}
                         {previewImage && <img src={previewImage} alt="Preview" className={styles.previewImage} />}
                     </div>
                     {error && <p className={styles.errorText}>{error}</p>}
@@ -157,8 +197,10 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
                 <svg className={styles.wave} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#ffffff" fillOpacity="1" d="M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,186.7C960,213,1056,235,1152,218.7C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
             </div>
             <div className={styles.cardBody}>
-                <h3 className={styles.cardName}>{user.username}</h3>
-                <p className={styles.cardRole}>
+                <h3 className={styles.cardName} style={{ fontFamily: 'Poppins, Segoe UI, Arial, sans-serif', color: '#0F2A1D', fontWeight: 600 }}>
+                    {user.username}
+                </h3>
+                <p className={styles.cardRole} style={{ fontFamily: 'Poppins, Segoe UI, Arial, sans-serif', color: '#fff', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     {roleDisplayName[user.role] || 'User'}
                 </p>
             </div>
@@ -168,7 +210,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
 
 // --- Main Users Page Component ---
 const UsersPage: React.FC = () => {
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<UserType[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>('');
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -176,7 +218,7 @@ const UsersPage: React.FC = () => {
     const fetchUsers = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await api.get<User[]>('/users');
+            const response = await api.get<UserType[]>('/users');
             setUsers(response.data);
         } catch (err) {
             setError('Failed to fetch users.');
@@ -194,15 +236,15 @@ const UsersPage: React.FC = () => {
     if (error) return <Layout><div className={styles.centerMessage}>{error}</div></Layout>;
 
     return (
-        <Layout>
+        <Layout> {/* The user prop is not needed here; Layout gets it from context */}
             <div className={styles.container}>
                 <div className={styles.pageHeader}>
                     <h1 className={styles.title}>User Management</h1>
                     <button onClick={() => setIsModalOpen(true)} className={styles.addButton}>+ Add User</button>
                 </div>
                 <div className={styles.grid}>
-                    {users.map(user => (
-                        <UserCard key={user.id} user={user} />
+                    {users.map(userItem => (
+                        <UserCard key={userItem.id} user={userItem} />
                     ))}
                 </div>
                 {isModalOpen && <AddUserModal onClose={() => setIsModalOpen(false)} onUserAdded={fetchUsers} />}

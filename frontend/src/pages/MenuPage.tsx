@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import type { MenuItem, OrderItem, Order } from '../types';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useToaster } from '../components/Toaster';
 import itemService from '../services/itemService';
 import orderService from '../services/orderService';
 import dashboardService from '../services/dashboardService';
-import OrderSummaryPanel from '../components/OrderSummaryPanel';
-import ItemCard from '../components/ItemCard';
-import BillPreviewModal from '../components/BillPreviewModal';
-import TopBar from '../components/TopBar';
-import MenuCategoryTabs from '../components/MenuCategoryTabs';
-import { useAuth } from '../context/AuthContext';
-import styles from './MenuPage.module.css';
-import BillResultModal from '../components/BillResultModal';
 import Layout from '../components/Layout';
+import ItemCard from '../components/ItemCard';
+import MenuCategoryTabs from '../components/MenuCategoryTabs';
+import OrderSummaryPanel from '../components/OrderSummaryPanel';
+import BillPreviewModal from '../components/BillPreviewModal';
+import BillResultModal from '../components/BillResultModal';
+import { PaymentMode } from '../types';
+import type { MenuItem, OrderItem } from '../types';
+import styles from './MenuPage.module.css';
 
 const categories = [
   { key: 'All', label: 'All' },
@@ -28,22 +29,42 @@ const MenuPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showPreview, setShowPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState<Order | null>(null);
   const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [customerName, setCustomerName] = useState('');
   const [table, setTable] = useState('');
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>(PaymentMode.CASH);
   const [orderCount, setOrderCount] = useState<number>(0);
   const [billResult, setBillResult] = useState<any>(null);
+  const [showBillResult, setShowBillResult] = useState(false);
+  const { showToast } = useToaster();
+
+  const resetOrderState = () => {
+    setSelectedItems([]);
+    setCustomerName('');
+    setTable('');
+    setPaymentMode(PaymentMode.CASH);
+    setError('');
+  };
+
+  const fetchOrderCount = useCallback(() => {
+    if (user) {
+      if (user.role === 'OWNER' || user.role === 'MANAGER') {
+        dashboardService.getSummary().then(summary => {
+          setOrderCount(summary?.todaysOrders || 0);
+        });
+      } else { // For WORKER role
+        orderService.getMyTodaysOrderCount().then(count => {
+          setOrderCount(count || 0);
+        });
+      }
+    }
+  }, [user]); // Dependency on user
 
   useEffect(() => {
     itemService.getItems().then(setItems).finally(() => setLoading(false));
-    if (user?.role === 'OWNER') {
-      dashboardService.getSummary().then(summary => {
-        setOrderCount(summary?.orders || 0);
-      });
-    }
-  }, [user]);
+    fetchOrderCount(); // Fetch on initial load
+  }, [fetchOrderCount]);
 
   const handleAddItem = (item: MenuItem) => {
     setSelectedItems(prev => {
@@ -64,16 +85,22 @@ const MenuPage: React.FC = () => {
   };
 
   const handleGenerateBill = () => {
-    setShowPreview(true);
+    if (selectedItems.length > 0) {
+      setShowPreview(true);
+    } else {
+      setError('Please add items to the order first.');
+    }
   };
 
   const handleConfirmBill = async () => {
+    if (!user) {
+      setError('You must be logged in to perform this action.');
+      showToast('You must be logged in to perform this action.', 'error');
+      return;
+    }
     setGenerating(true);
     setError('');
     try {
-      if (!user?.id) {
-        throw new Error('User not authenticated');
-      }
       const payload = {
         userId: parseInt(user.id),
         items: selectedItems.map(oi => ({ itemId: oi.item.id, quantity: oi.quantity })),
@@ -81,15 +108,19 @@ const MenuPage: React.FC = () => {
         table,
       };
       const order = await orderService.createOrder(payload);
-      const bill = await orderService.generateBill(order.id);
-      setBillResult(bill);
-      setOrderSuccess(null);
-      setSelectedItems([]);
+      const bill = await orderService.generateBill(order.id, undefined, paymentMode);
+      
       setShowPreview(false);
-      setCustomerName('');
-      setTable('');
+      setBillResult(bill);
+      setShowBillResult(true);
+
+      resetOrderState();
+      fetchOrderCount(); // Re-fetch the count after a successful order
+      showToast('Order created successfully!', 'success');
+
     } catch (err: any) {
       setError(err.message || 'Failed to generate bill');
+      showToast(err.message || 'Failed to generate bill', 'error');
     } finally {
       setGenerating(false);
     }
@@ -101,50 +132,48 @@ const MenuPage: React.FC = () => {
   );
 
   return (
-    <Layout orderCount={orderCount} user={{
-      name: user?.username || '',
-      role: user?.role || '',
-      email: user?.email || undefined,
-    }}>
-      <div className={styles.menuPage_main}>
-        <div className={styles.menuPage_leftPanel}>
-          <div className={styles.menuPage_searchContainer}>
-            <div className={styles.menuPage_searchBar}>
-              <span className={styles.menuPage_searchIcon}>
-                <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="9" cy="9" r="7" stroke="#375534" strokeWidth="2" />
-                  <path d="M15 15L18 18" stroke="#375534" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </span>
-              <input
-                type="text"
-                placeholder="Search"
-                className={styles.menuPage_searchInput}
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-              <span className={styles.menuPage_searchShortcut}>
-                &#8984;
-              </span>
+    <Layout>
+      <div className={styles.menuPage_root}>
+        <div className={styles.menuPage_main}>
+          <div className={styles.menuPage_leftPanel}>
+            <div className={styles.menuPage_searchContainer}>
+              <div className={styles.menuPage_searchBar}>
+                <span className={styles.menuPage_searchIcon}>
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="9" cy="9" r="7" stroke="#375534" strokeWidth="2" />
+                    <path d="M15 15L18 18" stroke="#375534" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className={styles.menuPage_searchInput}
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+                <span className={styles.menuPage_searchShortcut}>
+                  &#8984;
+                </span>
+              </div>
             </div>
+            <MenuCategoryTabs
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onSelectCategory={setSelectedCategory}
+              items={items}
+            />
+            {loading ? (
+              <div style={{ color: '#375534' }}>Loading menu...</div>
+            ) : (
+              <div className={styles.menuPage_grid}>
+                {filteredItems.map(item => (
+                  <ItemCard key={item.id} item={item} onAdd={() => handleAddItem(item)} />
+                ))}
+              </div>
+            )}
           </div>
-          <MenuCategoryTabs
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-            items={items}
-          />
-          {loading ? (
-            <div style={{ color: '#375534' }}>Loading menu...</div>
-          ) : (
-            <div className={styles.menuPage_grid}>
-              {filteredItems.map(item => (
-                <ItemCard key={item.id} item={item} onAdd={() => handleAddItem(item)} />
-              ))}
-            </div>
-          )}
         </div>
-        <div className={styles.menuPage_rightPanel}>
+        <div className={styles.menuPage_orderSummaryFixed}>
           <OrderSummaryPanel
             orderItems={selectedItems}
             onRemove={handleRemoveItem}
@@ -153,34 +182,39 @@ const MenuPage: React.FC = () => {
             generating={generating}
             customerName={customerName}
             onCustomerNameChange={setCustomerName}
+            paymentMode={paymentMode}
+            onPaymentModeChange={setPaymentMode}
           />
-          {error && <div style={{ color: '#e53935', marginTop: 8 }}>{error}</div>}
-          {orderSuccess && (
-            <div className={styles.menuPage_success}>
-              <div className={styles.menuPage_successTitle}>Bill Generated!</div>
-              <div>Receipt ID: <span className={styles.menuPage_successReceipt}>{orderSuccess.id}</span></div>
-              <div>Total: <span className={styles.menuPage_successTotal}>${orderSuccess.total.toFixed(2)}</span></div>
-              <button className={styles.menuPage_successBtn} onClick={() => setOrderSuccess(null)}>New Order</button>
-            </div>
-          )}
         </div>
       </div>
-      <BillResultModal
-        open={!!billResult}
-        bill={billResult}
-        user={user || { username: '' }}
-        onPrint={() => {}}
-        onClose={() => setBillResult(null)}
-      />
-      <BillPreviewModal
-        open={showPreview}
-        orderItems={selectedItems}
-        subtotal={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0)}
-        tax={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0) * 0.1}
-        total={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0) * 1.1}
-        onClose={() => setShowPreview(false)}
-        onConfirm={handleConfirmBill}
-      />
+
+      {user && (
+        <>
+          <BillPreviewModal
+            open={showPreview}
+            orderItems={selectedItems}
+            subtotal={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0)}
+            tax={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0) * 0.1}
+            total={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0) * 1.1}
+            onClose={() => {
+              setShowPreview(false);
+              resetOrderState();
+            }}
+            onConfirm={handleConfirmBill}
+            user={user}
+          />
+          <BillResultModal
+            open={showBillResult}
+            bill={billResult}
+            user={user}
+            onPrint={() => {}}
+            onClose={() => {
+              setShowBillResult(false);
+              setBillResult(null);
+            }}
+          />
+        </>
+      )}
     </Layout>
   );
 };

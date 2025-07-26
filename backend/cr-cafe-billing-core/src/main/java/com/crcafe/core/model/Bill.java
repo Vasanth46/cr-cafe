@@ -34,4 +34,8 @@ public class Bill {
 
     @Column(nullable = false, unique = true)
     private String receiptId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentMode paymentMode = PaymentMode.CASH;
 }

@@ -1,5 +1,10 @@
 // Global TypeScript types and interfaces for the POS Café App
 
+export enum PaymentMode {
+  CASH = 'CASH',
+  ONLINE = 'ONLINE'
+}
+
 export interface User {
   id: string;
   username: string;
@@ -20,6 +25,17 @@ export interface OrderItem {
   item: MenuItem;
   quantity: number;
   notes?: string;
+}
+
+export interface Bill {
+  id: number;
+  order: any;
+  billDate: string;
+  totalAmount: number;
+  discount: number;
+  finalAmount: number;
+  receiptId: string;
+  paymentMode: PaymentMode;
 }
 
 export interface RecentTransaction {

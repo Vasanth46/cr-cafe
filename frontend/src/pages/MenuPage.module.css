@@ -1,31 +1,30 @@
 .menuPage_root {
-  display: flex;
-  flex-direction: column;
+  position: relative;
   min-height: 100vh;
   background: #E3EED4;
-}
-.menuPage_main {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 2rem 2.5rem 2.5rem 2.5rem;
-  gap: 2.5rem;
+  padding-right: 350px;
   box-sizing: border-box;
 }
-.menuPage_leftPanel {
-  flex: 1;
-  padding: 0;
-  min-width: 0;
+
+.menuPage_main {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 2.5rem 2.5rem;
+  box-sizing: border-box;
 }
+
+.menuPage_leftPanel {
+  width: 100%;
+}
+
 .menuPage_searchContainer {
   width: 100%;
   display: flex;
   align-items: center;
   margin-bottom: 2.2rem;
 }
+
 .menuPage_searchBar {
   width: 100%;
   display: flex;
@@ -38,6 +37,7 @@
   box-shadow: none;
   position: relative;
 }
+
 .menuPage_searchIcon {
   color: #375534;
   font-size: 1.2rem;
@@ -45,6 +45,7 @@
   display: flex;
   align-items: center;
 }
+
 .menuPage_searchInput {
   flex: 1;
   border: none;
@@ -54,6 +55,7 @@
   color: #0F2A1D;
   font-family: inherit;
 }
+
 .menuPage_searchShortcut {
   color: #375534;
   font-size: 1.2rem;
@@ -61,14 +63,17 @@
   display: flex;
   align-items: center;
 }
+
 .menuPage_searchInput:focus {
   border-color: #375534;
 }
+
 .menuPage_categoryTabs {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
+
 .menuPage_categoryTab {
   padding: 0.5rem 1.5rem;
   border-radius: 1rem;
@@ -79,42 +84,56 @@
   cursor: pointer;
   transition: background 0.2s, color 0.2s, border 0.2s;
 }
+
 .menuPage_categoryTab--active {
   background: #375534;
   color: #fff;
   border-color: #375534;
 }
+
 .menuPage_categoryTab--disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 .menuPage_grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   align-items: stretch;
 }
+
 @media (min-width: 900px) {
   .menuPage_grid {
     grid-template-columns: repeat(4, 1fr);
     align-items: stretch;
   }
 }
+
 .menuPage_grid > * {
   min-height: 100%;
   height: 100%;
   display: flex;
 }
-.menuPage_rightPanel {
-  width: 100%;
-  max-width: 340px;
-  background: #fff;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  padding: 1.2rem 1rem 1.5rem 1rem;
-  border-radius: 1.2rem;
-  min-width: 260px;
-  align-self: flex-start;
+
+.menuPage_orderSummaryFixed {
+  position: fixed;
+  top: 120px;
+  right: 30px;
+  height: calc(100vh - 150px);
+  width: 320px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
 }
+
+.menuPage_rightPanel {
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+}
+
 .menuPage_success {
   margin-top: 2rem;
   padding: 1rem;
@@ -122,17 +141,21 @@
   border-radius: 1rem;
   color: #0F2A1D;
 }
+
 .menuPage_successTitle {
   font-weight: bold;
   font-size: 1.1rem;
   margin-bottom: 0.5rem;
 }
+
 .menuPage_successReceipt {
   font-family: monospace;
 }
+
 .menuPage_successTotal {
   font-weight: 600;
 }
+
 .menuPage_successBtn {
   margin-top: 1rem;
   padding: 0.5rem 1.5rem;
@@ -144,6 +167,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .menuPage_successBtn:hover {
   background: #0F2A1D;
 } 
