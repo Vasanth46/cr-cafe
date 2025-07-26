@@ -17,9 +17,12 @@ const PrintableReceipt: React.FC<PrintableReceiptProps> = ({ bill, order, user }
     <div className={styles.receiptPrintRoot}>
       <div className={styles.receiptHeader}>
         <div className={styles.receiptTitle}>CR's Cafe</div>
-        <div>123 Cafe Lane, Mumbai</div>
-        <div>Phone: +91 98765 43210</div>
-        <div>GSTIN: XXXXXXXXXXXXXXXX</div>
+        <div className={styles.addressLine}>
+          <div >Wadaripada, Akurli Road</div>
+          <div >Kandivali East (near Hanuman Mandir)</div>
+          <div>Phone: +91 77380 16499</div>
+          <div>GSTIN: XXXXXXXXXXXXXXXX</div>
+        </div>
       </div>
       <hr className={styles.receiptHr} />
       <div className={styles.receiptInfo}>
@@ -72,8 +75,8 @@ const PrintableReceipt: React.FC<PrintableReceiptProps> = ({ bill, order, user }
       </div>
       <hr className={styles.receiptHr} />
       <div className={styles.receiptFooter}>
-        <div>Thank you for your visit!</div>
-        <div>This receipt is your token.</div>
+        <div>Thank you for your order!</div>
+        <div>We hope to see you again soon.</div>
       </div>
     </div>
   );

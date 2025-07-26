@@ -154,3 +154,7 @@
   font-style: italic;
   line-height: 1.4;
 } 
+
+.addressLine {
+  font-size: 0.89em;
+}

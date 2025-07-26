@@ -11,8 +11,9 @@ const TokenSlip: React.FC<TokenSlipProps> = ({ bill, order }) => {
     <div className={styles.tokenSlipRoot + ' ' + styles.pageBreak}>
       <div className={styles.tokenHeader}>
         <div className={styles.tokenCafeTitle}>CR's Cafe</div>
-        <div className={styles.tokenCafeInfo}>123 Cafe Lane, Mumbai</div>
-        <div className={styles.tokenCafeInfo}>Phone: +91 98765 43210</div>
+        <div className={styles.tokenCafeInfo}>Wadaripada, Akurli Road</div>
+        <div className={styles.tokenCafeInfo}>Kandivali East (near Hanuman Mandir)</div>
+        <div className={styles.tokenCafeInfo}>Phone: +91 77380 16499</div>
         <div className={styles.tokenCafeInfo}>GSTIN: XXXXXXXXXXXXXXXX</div>
       </div>
       <hr className={styles.tokenHr} />
