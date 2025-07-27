@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import MenuPage from "./pages/MenuPage";
 import DashboardPage from "./pages/DashboardPage";
 import UsersPage from './pages/UsersPage';
+import CafeMenuPage from './pages/CafeMenuPage';
 import './index.css';
 import { ToasterProvider } from './components/Toaster';
 
@@ -19,10 +20,11 @@ const AppContent = () => {
           <Route element={<ProtectedRoute allowedRoles={["WORKER", "MANAGER"]} />}>
             <Route path="/menu" element={<MenuPage />} />
           </Route>
-          <Route element={<ProtectedRoute allowedRoles={["OWNER"]} />}>
+          <Route element={<ProtectedRoute allowedRoles={["OWNER"]} /> }>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/cafe-menu" element={<CafeMenuPage />} />
           </Route>
-          <Route path="/users" element={<UsersPage />} />
           <Route path="*" element={<LoginPage />} />
         </Routes>
       </div>
