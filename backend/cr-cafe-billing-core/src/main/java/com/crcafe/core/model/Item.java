@@ -22,4 +22,7 @@ public class Item {
     private BigDecimal price;
 
     private boolean isAvailable = true;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

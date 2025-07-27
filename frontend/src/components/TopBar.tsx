@@ -3,6 +3,7 @@ import logo from '../assets/logo.jpg';
 import styles from './TopBar.module.css';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { FiLogOut } from 'react-icons/fi';
 
 export interface TopBarProps {
@@ -13,6 +14,8 @@ export interface TopBarProps {
 const TopBar: React.FC<TopBarProps> = ({ orderCount, user }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -64,27 +67,44 @@ const TopBar: React.FC<TopBarProps> = ({ orderCount, user }) => {
                   <div className={styles.topBar_profileMenuName}>{user.name}</div>
                   {user.role === 'OWNER' && (
                       <>
-                        <button
-                            className={styles.topBar_profileMenuUsers}
-                            onClick={() => {
-                              setShowProfileMenu(false);
-                              navigate('/users');
-                            }}
-                        >
-                          Users
-                        </button>
+                        {currentPath !== '/dashboard' && (
+                            <button
+                                className={styles.topBar_profileMenuUsers}
+                                onClick={() => {
+                                  setShowProfileMenu(false);
+                                  navigate('/dashboard');
+                                }}
+                            >
+                              Dashboard
+                            </button>
+                        )}
 
-                        <button
-                            className={styles.topBar_profileMenuUsers}
-                            onClick={() => {
-                              setShowProfileMenu(false);
-                              navigate('/cafe-menu');
-                            }}
-                        >
-                          Cafe Menu
-                        </button>
+                        {currentPath !== '/users' && (
+                            <button
+                                className={styles.topBar_profileMenuUsers}
+                                onClick={() => {
+                                  setShowProfileMenu(false);
+                                  navigate('/users');
+                                }}
+                            >
+                              Users
+                            </button>
+                        )}
+
+                        {currentPath !== '/cafe-menu' && (
+                            <button
+                                className={styles.topBar_profileMenuUsers}
+                                onClick={() => {
+                                  setShowProfileMenu(false);
+                                  navigate('/cafe-menu');
+                                }}
+                            >
+                              Cafe Menu
+                            </button>
+                        )}
                       </>
                   )}
+
 
                   <div className={styles.topBar_profileMenuDivider} />
                   <button className={styles.topBar_profileMenuLogout} onClick={handleLogout}>

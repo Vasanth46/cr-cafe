@@ -25,14 +25,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('lastActive');
-
     // Optional: Call backend logout to invalidate refresh token if needed
     // authService.logout();
   }, []);
 
   // This effect runs only once when the app loads to check for a closed session
   useEffect(() => {
-    const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+    const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 15 minutes
 
     const tokenFromStorage = localStorage.getItem('token');
     const lastActiveString = localStorage.getItem('lastActive');
@@ -79,7 +78,7 @@ export const AuthProvider = ({ children }) => {
 
   // --- NEW: This effect sets up a timer to check for inactivity while the app is open ---
   useEffect(() => {
-    const INACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes
+    const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 15 minutes
     let intervalId;
 
     const checkInactivity = () => {
