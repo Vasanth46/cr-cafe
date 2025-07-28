@@ -1,26 +1,25 @@
 .receiptPrintRoot {
-  width: 80mm; /* Standard receipt paper width */
+  width: 80mm;
   margin: 0 auto;
   background: #fff;
   color: #111;
   font-family: 'Poppins', Arial, sans-serif;
   position: relative;
-  padding: 12px;
+  padding: 8px;
   box-sizing: border-box;
   border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .receiptLogoWrap {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 220px;
-  height: 220px;
+  width: 150px;
+  height: 150px;
   transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
-  opacity: 0.08;
+  opacity: 0.06;
 }
 
 .receiptLogo {
@@ -34,61 +33,60 @@
   text-align: center;
   z-index: 1;
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .receiptTitle {
-  font-size: 1.6em;
+  font-size: 1.2em;
   font-weight: bold;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   color: #0F2A1D;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .receiptHr {
   border: none;
-  border-top: 2px dashed #375534;
-  margin: 12px 0;
-  opacity: 0.7;
+  border-top: 1px dashed #375534;
+  margin: 6px 0;
+  opacity: 0.6;
 }
 
 .receiptInfo {
-  font-size: 0.9em;
-  margin-bottom: 6px;
+  font-size: 0.75em;
+  margin-bottom: 4px;
   z-index: 1;
   position: relative;
-  line-height: 1.4;
+  line-height: 1.2;
 }
 
-/* Items Table Header */
 .receiptItemsHeader {
   display: grid;
   grid-template-columns: 2fr 0.5fr 1fr 1fr;
-  gap: 6px;
-  font-size: 0.85em;
+  gap: 4px;
+  font-size: 0.75em;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   z-index: 1;
   position: relative;
   color: #375534;
-  padding: 4px 0;
+  padding: 2px 0;
 }
 
 .receiptItems {
   z-index: 1;
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .receiptItemRow {
   display: grid;
   grid-template-columns: 2fr 0.5fr 1fr 1fr;
-  gap: 6px;
-  font-size: 0.85em;
-  margin-bottom: 4px;
+  gap: 4px;
+  font-size: 0.75em;
+  margin-bottom: 2px;
   align-items: center;
-  padding: 2px 0;
+  padding: 1px 0;
 }
 
 .receiptItemRow:hover {
@@ -120,41 +118,47 @@
 }
 
 .receiptTotals {
-  margin-top: 12px;
+  margin-top: 6px;
   z-index: 1;
   position: relative;
-  padding: 8px 0;
+  padding: 4px 0;
 }
 
 .receiptTotalRow {
   display: flex;
   justify-content: space-between;
-  font-size: 0.95em;
-  margin-bottom: 4px;
+  font-size: 0.8em;
+  margin-bottom: 2px;
   color: #375534;
 }
 
 .receiptTotalRowBold {
   display: flex;
   justify-content: space-between;
-  font-size: 1.3em;
+  font-size: 1em;
   font-weight: bold;
-  margin-top: 8px;
-  padding-top: 8px;
+  margin-top: 4px;
+  padding-top: 4px;
   color: #0F2A1D;
 }
 
 .receiptFooter {
   text-align: center;
-  margin-top: 20px;
-  font-size: 0.9em;
+  margin-top: 12px;
+  font-size: 0.75em;
   z-index: 1;
   position: relative;
   color: #6B9071;
   font-style: italic;
-  line-height: 1.4;
-} 
+  line-height: 1.2;
+}
 
 .addressLine {
-  font-size: 0.89em;
+  font-size: 0.75em;
+  line-height: 1.2;
+}
+.receiptId {
+  font-weight: 600;
+  font-size: 1em;
+  color: #0F2A1D;
 }

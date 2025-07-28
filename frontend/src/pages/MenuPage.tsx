@@ -85,6 +85,7 @@ const MenuPage: React.FC = () => {
   };
 
   const handleGenerateBill = () => {
+    console.log("Clicked Generate Bill", selectedItems);
     if (selectedItems.length > 0) {
       setShowPreview(true);
     } else {
@@ -194,8 +195,8 @@ const MenuPage: React.FC = () => {
             open={showPreview}
             orderItems={selectedItems}
             subtotal={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0)}
-            tax={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0) * 0.1}
-            total={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0) * 1.1}
+            tax={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0) * 0.0}
+            total={selectedItems.reduce((sum, oi) => sum + oi.item.price * oi.quantity, 0)}
             onClose={() => {
               setShowPreview(false);
               resetOrderState();

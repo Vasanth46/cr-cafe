@@ -3,8 +3,8 @@ import api from '../services/api';
 import styles from './CafeMenuPage.module.css';
 import Layout from '../components/Layout';
 
-const CLOUDINARY_CLOUD_NAME = "diaem2ifq";
-const CLOUDINARY_UPLOAD_PRESET = "crcafeimg";
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 interface Item {
     id: number;

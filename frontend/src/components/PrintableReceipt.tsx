@@ -6,27 +6,32 @@ interface PrintableReceiptProps {
   bill: any;
   order: any;
   user: { username: string };
+  thought: string;
+
 }
 
-const PrintableReceipt: React.FC<PrintableReceiptProps> = ({ bill, order, user }) => {
+const PrintableReceipt: React.FC<PrintableReceiptProps> = ({ bill, order, user,thought }) => {
   // Debug logging to see what's in the bill object
   console.log('Bill object:', bill);
   console.log('Payment mode:', bill.paymentMode);
-  
-  return (
+
+
+    return (
     <div className={styles.receiptPrintRoot}>
       <div className={styles.receiptHeader}>
         <div className={styles.receiptTitle}>CR's Cafe</div>
         <div className={styles.addressLine}>
           <div >Wadaripada, Akurli Road</div>
           <div >Kandivali East (near Hanuman Mandir)</div>
-          <div>Phone: +91 77380 16499</div>
+          <div>Phone: +91 7021414853</div>
           <div>GSTIN: XXXXXXXXXXXXXXXX</div>
         </div>
       </div>
       <hr className={styles.receiptHr} />
       <div className={styles.receiptInfo}>
-        <div>Receipt: {bill.receiptId}</div>
+          <div>
+              Receipt: <span className={styles.receiptId}>{bill.receiptId}</span>
+          </div>
         <div>Date: {new Date(bill.billDate).toLocaleString()}</div>
         <div>Cashier: {user.username}</div>
         <div>Payment: {bill.paymentMode}</div>
@@ -76,7 +81,7 @@ const PrintableReceipt: React.FC<PrintableReceiptProps> = ({ bill, order, user }
       <hr className={styles.receiptHr} />
       <div className={styles.receiptFooter}>
         <div>Thank you for your order!</div>
-        <div>We hope to see you again soon.</div>
+        <div>{thought}</div>
       </div>
     </div>
   );
