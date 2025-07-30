@@ -1,8 +1,7 @@
 import React from 'react';
 import type { MenuItem } from '../types';
 import styles from './ItemCard.module.css';
-import character from '../assets/character.png';
-import banner from '../assets/banner.png';
+
 
 interface ItemCardProps {
   item: MenuItem;

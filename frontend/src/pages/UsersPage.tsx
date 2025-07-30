@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import api from '../services/api'; // Make sure this path is correct for your project
 import styles from './UsersPage.module.css'; // Import the CSS module
 import Layout from '../components/Layout'; // Import the Layout component
-import { type User as UserType } from '../types';
 
 // --- Cloudinary Configuration ---
 // These values are now sourced from your .env.local file
@@ -12,7 +11,7 @@ const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 // --- Type Definitions ---
 type UserRole = 'OWNER' | 'MANAGER' | 'WORKER';
 
-interface User {
+interface UserType {
     id: number;
     username: string;
     role: UserRole;

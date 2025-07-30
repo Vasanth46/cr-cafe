@@ -13,7 +13,7 @@ interface BillPreviewModalProps {
   user: any;
 }
 
-const BillPreviewModal: React.FC<BillPreviewModalProps> = ({ open, orderItems, subtotal, tax, total, onClose, onConfirm, user }) => {
+const BillPreviewModal: React.FC<BillPreviewModalProps> = ({ open, orderItems, subtotal, tax, total, onClose, onConfirm }) => {
   const [loading, setLoading] = useState(false);
 
   const handleConfirm = async () => {

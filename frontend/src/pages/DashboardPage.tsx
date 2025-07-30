@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import dashboardService from '../services/dashboardService';
 import { FileClockIcon ,Wallet ,ShoppingBag ,ClipboardList,TrendingUp,ReceiptText,Percent,PieChart as PieChartIcon,LineChart as LineChartIcon} from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import styles from './DashboardPage.module.css';
-import logo from '../assets/logo.jpg';
+
 import Layout from '../components/Layout';
-import { useAuth } from '../context/AuthContext';
+
 import { getTodaysRevenueByPaymentMode } from '../services/dashboardService';
 import { getRecentTransactionsPaginated } from '../services/dashboardService';
 import { getRecentTransactionsWithFilters, getAllCashiers } from '../services/dashboardService';
@@ -14,7 +14,7 @@ import { Filter } from 'lucide-react';
 const cafeColors = ['#0F2A1D', '#375534', '#6B9071', '#AEC3B0', '#E3EED4'];
 
 const DashboardPage: React.FC = () => {
-  const { user } = useAuth();
+
   const [summary, setSummary] = useState<any>(null);
   const [topItems, setTopItems] = useState<any[]>([]);
   const [revenue, setRevenue] = useState<any[]>([]);
@@ -29,7 +29,7 @@ const DashboardPage: React.FC = () => {
   const [revenueByPaymentMode, setRevenueByPaymentMode] = useState<{ [key: string]: number }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalTransactions, setTotalTransactions] = useState(0);
+
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [cashiers, setCashiers] = useState<string[]>([]);
@@ -42,7 +42,7 @@ const DashboardPage: React.FC = () => {
     paymentMode: ''
   });
   const [appliedFilters, setAppliedFilters] = useState<{[key: string]: string}>({});
-  const [filtersLoading, setFiltersLoading] = useState(false);
+
 
   useEffect(() => {
     setUsersLoading(true);
@@ -75,7 +75,6 @@ const DashboardPage: React.FC = () => {
         .then((data) => {
           setRecentTransactions(data.transactions || []);
           setTotalPages(data.totalPages || 1);
-          setTotalTransactions(data.totalCount || 0);
         })
         .catch(err => console.error("Failed to fetch recent transactions", err))
         .finally(() => setTransactionsLoading(false));
@@ -84,7 +83,6 @@ const DashboardPage: React.FC = () => {
         .then((data) => {
           setRecentTransactions(data.transactions || []);
           setTotalPages(data.totalPages || 1);
-          setTotalTransactions(data.totalCount || 0);
         })
         .catch(err => console.error("Failed to fetch filtered transactions", err))
         .finally(() => setTransactionsLoading(false));
@@ -490,7 +488,7 @@ const DashboardPage: React.FC = () => {
                         outerRadius={80}
                         label={false}
                     >
-                      {topItems.map((entry, index) => (
+                      {topItems.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={cafeColors[index % cafeColors.length]} />
                       ))}
                     </Pie>

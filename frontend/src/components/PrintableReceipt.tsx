@@ -1,16 +1,15 @@
 import React from 'react';
-import logo from '../assets/logo.jpg';
+
 import styles from './PrintableReceipt.module.css';
 
 interface PrintableReceiptProps {
   bill: any;
   order: any;
   user: { username: string };
-  thought: string;
-
+  thought?: string;
 }
 
-const PrintableReceipt: React.FC<PrintableReceiptProps> = ({ bill, order, user,thought }) => {
+const PrintableReceipt: React.FC<PrintableReceiptProps> = ({ bill, order, user, thought = "Have a great day!" }) => {
   // Debug logging to see what's in the bill object
   console.log('Bill object:', bill);
   console.log('Payment mode:', bill.paymentMode);

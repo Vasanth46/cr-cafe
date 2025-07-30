@@ -176,12 +176,14 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onToggleAvailability, onDelet
     const [price, setPrice] = useState(item.price);
     const [isEditing, setIsEditing] = useState(false);
 
-    const handleDelete = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (window.confirm(`Are you sure you want to delete "${item.name}"? This cannot be undone.`)) {
-            onDelete(item.id);
-        }
-    };
+    console.debug("Delete", onDelete);
+
+    // const handleDelete = (e: React.MouseEvent) => {
+    //     e.stopPropagation();
+    //     if (window.confirm(`Are you sure you want to delete "${item.name}"? This cannot be undone.`)) {
+    //         onDelete(item.id);
+    //     }
+    // };
 
     const handlePriceBlur = () => {
         if (price !== item.price) {

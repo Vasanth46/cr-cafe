@@ -30,11 +30,17 @@ const MenuPage: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
+
+
+
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [customerName, setCustomerName] = useState('');
   const [table, setTable] = useState('');
   const [paymentMode, setPaymentMode] = useState<PaymentMode>(PaymentMode.CASH);
   const [orderCount, setOrderCount] = useState<number>(0);
+
+
+
   const [billResult, setBillResult] = useState<any>(null);
   const [showBillResult, setShowBillResult] = useState(false);
   const { showToast } = useToaster();
@@ -57,6 +63,7 @@ const MenuPage: React.FC = () => {
         orderService.getMyTodaysOrderCount().then(count => {
           setOrderCount(count || 0);
         });
+        console.debug("Order Count", orderCount);
       }
     }
   }, [user]); // Dependency on user
@@ -90,6 +97,7 @@ const MenuPage: React.FC = () => {
       setShowPreview(true);
     } else {
       setError('Please add items to the order first.');
+      console.debug("Error", error);
     }
   };
 

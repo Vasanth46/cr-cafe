@@ -14,7 +14,7 @@ interface BillResultModalProps {
   onClose: () => void;
 }
 
-const BillResultModal: React.FC<BillResultModalProps> = ({ open, bill, user, onPrint, onClose }) => {
+const BillResultModal: React.FC<BillResultModalProps> = ({ open, bill, user, onClose }) => {
   if (!open || !bill) return null;
 
   const handlePrint = () => {

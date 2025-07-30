@@ -1,5 +1,6 @@
 import api from './api';
-import type { OrderRequestDto, OrderResponseDto, BillResponseDto, PaymentMode } from '../types';
+import type { OrderRequestDto, OrderResponseDto, BillResponseDto } from '../types';
+import { PaymentMode } from '../types';
 
 const createOrder = async (orderData: OrderRequestDto): Promise<OrderResponseDto> => {
     try {

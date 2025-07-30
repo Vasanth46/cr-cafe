@@ -1,8 +1,40 @@
 // Global TypeScript types and interfaces for the POS Café App
 
-export enum PaymentMode {
-  CASH = 'CASH',
-  ONLINE = 'ONLINE'
+export const PaymentMode = {
+  CASH: 'CASH',
+  ONLINE: 'ONLINE'
+} as const;
+
+export type PaymentMode = typeof PaymentMode[keyof typeof PaymentMode];
+
+// Add missing DTO types
+export interface OrderRequestDto {
+  userId: number;
+  items: Array<{
+    itemId: string;
+    quantity: number;
+  }>;
+  customerName?: string;
+  table?: string;
+}
+
+export interface OrderResponseDto {
+  id: number;
+  user: User;
+  orderDate: string;
+  totalAmount: number;
+  orderItems: OrderItem[];
+}
+
+export interface BillResponseDto {
+  id: number;
+  order: OrderResponseDto;
+  billDate: string;
+  totalAmount: number;
+  discount: number;
+  finalAmount: number;
+  receiptId: string;
+  paymentMode: PaymentMode;
 }
 
 export interface User {
