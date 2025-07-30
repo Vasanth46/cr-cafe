@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: cr-cafe-backend
+    env: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar cr-cafe-billing-app/target/cr-cafe-billing-app-1.0.0-SNAPSHOT.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SERVER_PORT
+        value: 8080 

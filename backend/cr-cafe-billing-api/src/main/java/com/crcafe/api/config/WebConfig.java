@@ -15,7 +15,13 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**") // Apply this rule to all API endpoints
-                .allowedOrigins("http://localhost:5173") // Allow requests from our frontend's origin
+                .allowedOrigins(
+                    "http://localhost:5173", // Local development
+                    "https://crscafe.com", // Replace with your actual domain
+                    "https://www.crscafe.com", // Replace with your actual domain
+                    "https://api.crscafe.com", // Replace with your actual subdomain
+                    "https://app.crscafe.com" // Replace with your actual subdomain
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE","PATCH", "OPTIONS") // Allow all standard HTTP methods
                 .allowedHeaders("*") // Allow all headers
                 .allowCredentials(true); // Allow cookies and authentication headers
