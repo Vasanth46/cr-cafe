@@ -30,7 +30,7 @@
 
   <properties>
     <!-- Set the Java version to 21 -->
-    <java.version>21</java.version>
+    <java.version>17</java.version>
   </properties>
 
 </project>
