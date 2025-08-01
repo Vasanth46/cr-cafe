@@ -4,6 +4,7 @@ import path from 'path'; // Needed for resolving absolute paths
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/', // Ensures proper base path for production
   resolve: {
     alias: {
       '@context': path.resolve(__dirname, 'src/context'),
