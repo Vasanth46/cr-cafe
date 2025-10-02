@@ -1,8 +1,25 @@
-# CR's Cafe - Full Stack Billing System
+# CR's Cafe - Full Stack Billing System (My Contributions)
+
+![API Endpoints](https://img.shields.io/badge/API%20Endpoints-active-brightgreen)
+![Java](https://img.shields.io/badge/Java-21-blue)
+![Spring Boot](https://img.shields.io/badge/SpringBoot-3.3+-green)
+![React](https://img.shields.io/badge/React-18-blue)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue)
 
 A modern, production-ready web application designed to handle point-of-sale operations for cafes. Features a robust Spring Boot backend and responsive React frontend with role-based access control and real-time billing capabilities.
 
+This repository is my fork of **CR's Cafe Billing System**, a production-ready web application for cafe point-of-sale operations.
+
 **Live Demo:** [CR's Cafe](https://www.crscafe.com/)
+
+I **fully contributed to the backend development**, including:
+
+- Designing and implementing all core APIs using **Java 21 + Spring Boot 3.3+**  
+- Database schema design and setup using **MySQL**  
+- JWT-based **authentication & role-based access control**  
+- Implementing **business logic for orders, billing, discounts, and owner dashboard**  
+- Deployment configuration and server setup  
+- Minor UI enhancements in **bill generation** and **owner dashboard** 
 
 ## 🚀 Features
 
