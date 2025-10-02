@@ -45,7 +45,7 @@ A modern, production-ready web application designed to handle point-of-sale oper
 1. **Clone the Repository**
    
    ```bash
-   git clone https://github.com/Sumit-Mundhe/cr-cafe.git
+   git clone https://github.com/Vasanth46/cr-cafe.git
    cd cr-cafe/cr-cafe-billing
 3. **Database Setup**
    
